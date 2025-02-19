@@ -1,0 +1,15 @@
+---
+# Setup container folders
+- name: Ensure Home Assistant backup directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/backups/homeassistant"
+    state: directory
+    mode: '0755'
+
+- name: Ensure /var/llm-models directory exists
+  ansible.builtin.file:
+    path: /var/llm-models
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
