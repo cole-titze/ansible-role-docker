@@ -75,3 +75,6 @@
 
 - name: Add pi-hole
   ansible.builtin.import_tasks: pi-hole.yml
+
+- name: Add pi-hole
+  ansible.builtin.import_tasks: home-assistant.yml
