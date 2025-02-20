@@ -43,3 +43,4 @@
     job: "/bin/bash /usr/local/bin/portainer.sh"
     user: "{{ ansible_user }}"
     state: present
+  diff: no

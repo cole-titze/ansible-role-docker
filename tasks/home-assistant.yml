@@ -20,6 +20,15 @@
     volumes:
       - "/var/homeassistant:/config"
 
+# Create backup directory
+- name: Ensure Home Assistant backups directory exists
+  ansible.builtin.file:
+    path: ~/backups/homeassistant
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
 # Setup nightly updates
 - name: Copy Home Assistant update script
   ansible.builtin.copy:
@@ -45,3 +54,4 @@
     job: "/bin/bash /usr/local/bin/home-assistant.sh"
     user: "{{ ansible_user }}"
     state: present
+  diff: no
