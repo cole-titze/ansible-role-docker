@@ -1,0 +1,58 @@
+---
+- name: Ensure Pi-hole directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: ansible
+    group: ansible
+  loop:
+    - ./etc-pihole
+    - ./etc-dnsmasq.d
+
+- name: Run Pi-hole Docker container
+  community.docker.docker_container:
+    name: pi-hole
+    image: pihole/pihole:latest
+    state: started
+    restart_policy: always
+    network_mode: bridge
+    published_ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./etc-pihole:/etc/pihole"
+      - "./etc-dnsmasq.d:/etc/dnsmasq.d"
+    env:
+      TZ: "America/Chicago"
+    dns_servers:
+      - "127.0.0.1"
+      - "1.1.1.1"
+
+# Setup nightly updates
+- name: Copy Pi-hole update script
+  ansible.builtin.copy:
+    src: files/pi-hole.sh
+    dest: /usr/local/bin/pi-hole.sh
+    owner: ansible
+    group: ansible
+    mode: '0755'
+
+- name: Ensure update script is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/pi-hole.sh
+    mode: '0755'
+    owner: ansible
+    group: ansible
+    state: file
+
+- name: Schedule Pi-hole update via cron
+  ansible.builtin.cron:
+    name: "Update Pi-hole Docker container"
+    minute: "0"
+    hour: "3"
+    job: "/bin/bash /usr/local/bin/pi-hole.sh"
+    user: ansible
+    state: present
