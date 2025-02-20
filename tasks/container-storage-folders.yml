@@ -11,5 +11,5 @@
     path: /var/llm-models
     state: directory
     mode: '0755'
-    owner: root
-    group: root
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
