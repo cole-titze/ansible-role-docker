@@ -72,3 +72,6 @@
 
 - name: Add portainer
   ansible.builtin.import_tasks: portainer.yml
+
+- name: Add pi-hole
+  ansible.builtin.import_tasks: pi-hole.yml
