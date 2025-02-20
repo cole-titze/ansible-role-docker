@@ -23,7 +23,7 @@
 # Create backup directory
 - name: Ensure Home Assistant backups directory exists
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/backups/homeassistant"
+    path: "/home/{{ ansible_user }}/backups/homeassistant"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

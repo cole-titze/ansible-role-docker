@@ -35,9 +35,9 @@
     group: "{{ ansible_user }}"
     state: file
 
-- name: Schedule Pi-hole update via cron
+- name: Schedule portainer update via cron
   ansible.builtin.cron:
-    name: "Update Pi-hole Docker container"
+    name: "Update portainer Docker container"
     minute: "0"
     hour: "3"
     job: "/bin/bash /usr/local/bin/portainer.sh"
