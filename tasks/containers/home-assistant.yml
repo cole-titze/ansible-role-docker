@@ -96,10 +96,13 @@
   register: automations_file
   ignore_errors: true
 
-- name: Set ha_extracted if automations.yml has content
+- name: Set ha_extracted based on automations.yml content
   ansible.builtin.set_fact:
-    ha_extracted: true
-  when: automations_file.content | default('') | b64decode | trim | length > 0
+    ha_extracted: "{{ (automations_file.content | default('') | b64decode | trim | length > 0) | ternary(true, false) }}"
+
+- name: Debug ha_extracted value
+  ansible.builtin.debug:
+    var: ha_extracted
 
 - name: Copy Home Assistant backups if present
   ansible.builtin.copy:
