@@ -129,7 +129,7 @@
     tar -xOf ~/backups/homeassistant/$latest_backup "./homeassistant.tar.gz" | tar --strip-components=1 -zxf - -C /var/homeassistant
   args:
     executable: /bin/bash
-  when: not ha_extracted.stat.exists and 
+  when: not ha_extracted and 
         lookup('fileglob', '~/backups/homeassistant/*', errors='ignore') | length > 0
   become: true
 
