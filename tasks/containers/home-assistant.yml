@@ -98,7 +98,7 @@
 
 - name: Set ha_extracted based on automations.yml content
   ansible.builtin.set_fact:
-    ha_extracted: "{{ (automations_file.content | default('') | b64decode | trim | length > 0) | ternary(true, false) }}"
+    ha_extracted: "{{ (automations_file.content is defined and (automations_file.content | b64decode | trim != '[]')) | ternary(true, false) }}"
 
 - name: Debug ha_extracted value
   ansible.builtin.debug:
