@@ -26,4 +26,4 @@
     msg: "Rebooting as part of Ansible playbook"
     reboot_timeout: 300
     test_command: uptime
-  when: cmdline_result is changed or ubuntuenv_result is changed
+  when: cmdline_result is changed
