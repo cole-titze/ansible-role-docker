@@ -92,7 +92,7 @@
 
 - name: Check if automations.yml has content
   ansible.builtin.slurp:
-    src: /var/homeassistant/automations.yml
+    src: /var/homeassistant/automations.yaml
   register: automations_file
   ignore_errors: true
 
