@@ -96,10 +96,9 @@
   register: automations_file
   ignore_errors: true
 
-- name: Ensure Home Assistant is already extracted
-  ansible.builtin.stat:
-    path: /var/homeassistant/configuration.yaml
-  register: ha_extracted
+- name: Set ha_extracted if automations.yml has content
+  ansible.builtin.set_fact:
+    ha_extracted: true
   when: automations_file.content | default('') | b64decode | trim | length > 0
 
 - name: Copy Home Assistant backups if present
