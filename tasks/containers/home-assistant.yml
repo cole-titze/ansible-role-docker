@@ -112,7 +112,7 @@
     remote_src: false
   with_fileglob:
     - "~/Desktop/Backups/HA/*"
-  when: not ha_extracted.stat.exists and 
+  when: not ha_extracted and 
         lookup('fileglob', '~/Desktop/Backups/*', errors='ignore') | length > 0
 
 - name: Ensure /var/homeassistant directory exists
