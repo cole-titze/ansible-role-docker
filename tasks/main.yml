@@ -87,8 +87,9 @@
 - name: Add esphome
   ansible.builtin.import_tasks: containers/esphome.yml
 
-- name: Reboot the machine
+- name: Reboot the machine if any changes were made
   ansible.builtin.reboot:
     msg: "Rebooting as part of Ansible playbook"
     reboot_timeout: 300
     test_command: uptime
+  when: ansible_play_batch | length > 0 and ansible_run_result is changed
