@@ -84,3 +84,6 @@
 
 - name: Add llm web backend
   ansible.builtin.import_tasks: containers/llm-web-backend.yml
+
+- name: Add esphome
+  ansible.builtin.import_tasks: containers/esphome.yml
