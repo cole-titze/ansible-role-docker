@@ -92,4 +92,3 @@
     msg: "Rebooting as part of Ansible playbook"
     reboot_timeout: 300
     test_command: uptime
-  when: ansible_play_batch | length > 0 and ansible_run_result is changed
