@@ -64,4 +64,5 @@
     mode: '0644'
     directory_mode: '0755'
     remote_src: false
+    force: false
   when: lookup('fileglob', '~/Desktop/Backups/LLM/model.gguf', errors='ignore') | length > 0

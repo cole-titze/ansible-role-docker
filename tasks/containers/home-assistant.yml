@@ -116,7 +116,6 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: '0755'
-    recurse: yes
 
 - name: Extract the latest Home Assistant backup into /var/homeassistant
   ansible.builtin.shell: |
