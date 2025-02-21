@@ -1,4 +1,6 @@
 ---
+- include_tasks: docker-setup/enable-cgroups.yml
+
 - include_tasks: docker-setup/debian-setup.yml
   when: ansible_os_family == 'Debian'
 
@@ -87,3 +89,9 @@
 
 - name: Add esphome
   ansible.builtin.import_tasks: containers/esphome.yml
+
+- name: Reboot the machine
+  ansible.builtin.reboot:
+    msg: "Rebooting as part of Ansible playbook"
+    reboot_timeout: 300
+    test_command: uptime

@@ -20,3 +20,9 @@
     - "cgroup_enable=memory"
   notify: reboot-pi
   when: ansible_distribution == 'Ubuntu'
+
+- name: Reboot the machine
+  ansible.builtin.reboot:
+    msg: "Rebooting as part of Ansible playbook"
+    reboot_timeout: 300
+    test_command: uptime
