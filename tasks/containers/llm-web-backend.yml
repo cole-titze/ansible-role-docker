@@ -45,3 +45,11 @@
     user: "{{ ansible_user }}"
     state: present
   diff: no
+
+- name: Ensure /var/llm-models directory exists
+  ansible.builtin.file:
+    path: /var/llm-models
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
