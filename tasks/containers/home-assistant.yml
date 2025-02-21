@@ -90,10 +90,17 @@
     state: directory
     mode: '0755'
 
-- name: Check if Home Assistant is already extracted
+- name: Check if automations.yml has content
+  ansible.builtin.slurp:
+    src: ~/backups/homeassistant/automations.yml
+  register: automations_file
+  ignore_errors: true
+
+- name: Ensure Home Assistant is already extracted
   ansible.builtin.stat:
     path: /var/homeassistant/configuration.yaml
   register: ha_extracted
+  when: automations_file.content | default('') | b64decode | trim | length > 0
 
 - name: Copy Home Assistant backups if present
   ansible.builtin.copy:
