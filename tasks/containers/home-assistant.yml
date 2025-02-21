@@ -125,11 +125,10 @@
 
 - name: Extract the latest Home Assistant backup into /var/homeassistant
   ansible.builtin.shell: |
-    latest_backup=$(ls -Art ~/backups/homeassistant | tail -n 1)
-    tar -xOf ~/backups/homeassistant/$latest_backup "./homeassistant.tar.gz" | tar --strip-components=1 -zxf - -C /var/homeassistant
+    latest_backup=$(ls -Art "/home/{{ ansible_user }}/backups/homeassistant" | tail -n 1)
+    tar -xOf "/home/{{ ansible_user }}/backups/homeassistant/$latest_backup" "./homeassistant.tar.gz" | tar --strip-components=1 -zxf - -C /var/homeassistant
   args:
     executable: /bin/bash
   when: not ha_extracted and 
-        lookup('fileglob', '~/backups/homeassistant/*', errors='ignore') | length > 0
+        lookup('fileglob', '/home/{{ ansible_user }}/backups/homeassistant/*', errors='ignore') | length > 0
   become: true
-
