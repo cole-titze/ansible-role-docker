@@ -1,0 +1,42 @@
+---
+- name: Pull Magic Mirror Docker image
+  community.docker.docker_image:
+    name: ghcr.io/cole-titze/containers/magic-mirror:latest
+    source: pull
+
+- name: Run Magic Mirror Docker container
+  community.docker.docker_container:
+    name: magic-mirror
+    image: ghcr.io/cole-titze/containers/magic-mirror:latest
+    state: started
+    restart_policy: always
+    ports:
+      - "8082:8082"
+    detach: true
+
+# Setup nightly updates
+- name: Copy magic mirror update script
+  ansible.builtin.copy:
+    src: files/containers/magic-mirror.sh
+    dest: /usr/local/bin/magic-mirror.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Ensure update script is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/magic-mirror.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
+
+- name: Schedule magic mirror update via cron
+  ansible.builtin.cron:
+    name: "Update magic mirror container"
+    minute: "0"
+    hour: "3"
+    job: "/bin/bash /usr/local/bin/magic-mirror.sh"
+    user: "{{ ansible_user }}"
+    state: present
+  diff: no

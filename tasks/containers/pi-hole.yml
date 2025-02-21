@@ -34,7 +34,7 @@
 # Setup nightly updates
 - name: Copy Pi-hole update script
   ansible.builtin.copy:
-    src: files/pi-hole.sh
+    src: files/containers/pi-hole.sh
     dest: /usr/local/bin/pi-hole.sh
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

@@ -65,16 +65,22 @@
 
   # Call other scripts
 - name: Add cgroups
-  ansible.builtin.import_tasks: enable-cgroups.yml
+  ansible.builtin.import_tasks: docker-setup/enable-cgroups.yml
 
 - name: Add docker users
-  ansible.builtin.import_tasks: docker-users.yml
+  ansible.builtin.import_tasks: docker-setup/docker-users.yml
 
 - name: Add portainer
-  ansible.builtin.import_tasks: portainer.yml
+  ansible.builtin.import_tasks: containers/portainer.yml
 
 - name: Add pi-hole
-  ansible.builtin.import_tasks: pi-hole.yml
+  ansible.builtin.import_tasks: containers/pi-hole.yml
 
-- name: Add pi-hole
-  ansible.builtin.import_tasks: home-assistant.yml
+- name: Add home-assistant
+  ansible.builtin.import_tasks: containers/home-assistant.yml
+
+- name: Add magic mirror
+  ansible.builtin.import_tasks: containers/magic-mirror.yml
+
+- name: Add llm web backend
+  ansible.builtin.import_tasks: containers/llm-web-backend.yml

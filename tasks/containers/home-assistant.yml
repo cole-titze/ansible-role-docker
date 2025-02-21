@@ -1,0 +1,124 @@
+---
+# Setup Home Assistant
+- name: Ensure Home Assistant config directory exists
+  ansible.builtin.file:
+    path: /var/homeassistant
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Run Home Assistant Docker container
+  community.docker.docker_container:
+    name: home-assistant
+    image: homeassistant/raspberrypi4-homeassistant
+    state: started
+    restart_policy: always
+    network_mode: host
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    volumes:
+      - "/var/homeassistant:/config"
+
+# Create backup directory
+- name: Ensure Home Assistant backups directory exists
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/backups/homeassistant"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+# Setup nightly updates
+- name: Copy Home Assistant update script
+  ansible.builtin.copy:
+    src: files/containers/home-assistant.sh
+    dest: /usr/local/bin/home-assistant.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Ensure update script is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/home-assistant.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
+
+- name: Schedule home assistant update via cron
+  ansible.builtin.cron:
+    name: "Update home assitant container"
+    minute: "0"
+    hour: "3"
+    job: "/bin/bash /usr/local/bin/home-assistant.sh"
+    user: "{{ ansible_user }}"
+    state: present
+  diff: no
+
+# Setup backups
+- name: Copy Home Assistant backup script
+  ansible.builtin.copy:
+    src: files/backups/backup-home-assistant.sh
+    dest: /usr/local/bin/backup-home-assistant.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Ensure backup script is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/backup-home-assistant.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
+  
+- name: Schedule home assistant backup via cron
+  ansible.builtin.cron:
+    name: "Move backup home assitant files"
+    minute: "0"
+    hour: "1"
+    job: "/bin/bash /usr/local/bin/backup-home-assistant.sh"
+    user: "{{ ansible_user }}"
+    state: present
+  diff: no
+
+# Move backups to rpi if they exist
+- name: Check if Home Assistant is already extracted
+  ansible.builtin.stat:
+    path: /var/homeassistant/configuration.yaml
+  register: ha_extracted
+
+- name: Copy Home Assistant backups if present
+  ansible.builtin.copy:
+    src: ~/Desktop/HA_Backups/
+    dest: "/home/{{ ansible_user }}/backups/homeassistant/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+    directory_mode: '0755'
+    remote_src: false
+  with_fileglob:
+    - "~/Desktop/HA_Backups/*"
+  when: not ha_extracted.stat.exists and 
+        lookup('fileglob', '~/Desktop/HA_Backups/*', errors='ignore') | length > 0
+
+- name: Ensure /var/homeassistant directory exists
+  ansible.builtin.file:
+    path: /var/homeassistant
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+    recurse: yes
+
+- name: Extract the latest Home Assistant backup into /var/homeassistant
+  ansible.builtin.shell: |
+    latest_backup=$(ls -Art ~/backups/homeassistant | tail -n 1)
+    tar -xOf ~/backups/homeassistant/$latest_backup "./homeassistant.tar.gz" | tar --strip-components=1 -zxf - -C /var/homeassistant
+  args:
+    executable: /bin/bash
+  when: not ha_extracted.stat.exists and 
+        lookup('fileglob', '~/backups/homeassistant/*', errors='ignore') | length > 0
+  become: true
+

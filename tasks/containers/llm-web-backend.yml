@@ -1,0 +1,47 @@
+---
+
+- name: Pull LLM Web Backend Docker image
+  community.docker.docker_image:
+    name: ghcr.io/cole-titze/containers/llm-web-backend:latest
+    source: pull
+
+- name: Run LLM Web Backend Docker container
+  community.docker.docker_container:
+    name: llm-web-backend
+    image: ghcr.io/cole-titze/containers/llm-web-backend:latest
+    state: started
+    restart_policy: always
+    volumes:
+      - /var/llm-models:/llm/models
+    memory: 5.5g
+    cpus: 3.33
+    ports:
+      - "8083:8083"
+    detach: true
+
+# Setup nightly updates
+- name: Copy llm backend update script
+  ansible.builtin.copy:
+    src: files/containers/llm-web-backend.sh
+    dest: /usr/local/bin/llm-web-backend.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Ensure update script is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/llm-web-backend.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
+
+- name: Schedule llm web backend update via cron
+  ansible.builtin.cron:
+    name: "Update llm web backend container"
+    minute: "0"
+    hour: "3"
+    job: "/bin/bash /usr/local/bin/llm-web-backend.sh"
+    user: "{{ ansible_user }}"
+    state: present
+  diff: no

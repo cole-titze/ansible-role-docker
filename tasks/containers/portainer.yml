@@ -21,7 +21,7 @@
 # Setup nightly updates
 - name: Copy Portainer update script
   ansible.builtin.copy:
-    src: files/portainer.sh
+    src: files/containers/portainer.sh
     dest: /usr/local/bin/portainer.sh
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"

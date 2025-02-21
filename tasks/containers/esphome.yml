@@ -1,0 +1,45 @@
+---
+- name: Pull ESPHome Docker image
+  community.docker.docker_image:
+    name: ghcr.io/esphome/esphome
+    source: pull
+
+- name: Run ESPHome Docker container
+  community.docker.docker_container:
+    name: esphome
+    image: ghcr.io/esphome/esphome
+    state: started
+    restart_policy: always
+    ports:
+      - "6052:6052"
+      - "6123:6123"
+    volumes:
+      - /var/esphome/config:/config
+    detach: true
+
+# Setup nightly updates
+- name: Copy esphome update script
+  ansible.builtin.copy:
+    src: files/containers/esphome.sh
+    dest: /usr/local/bin/esphome.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Ensure update script is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/esphome.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
+
+- name: Schedule esphome update via cron
+  ansible.builtin.cron:
+    name: "Update esphome container"
+    minute: "0"
+    hour: "3"
+    job: "/bin/bash /usr/local/bin/esphome.sh"
+    user: "{{ ansible_user }}"
+    state: present
+  diff: no
