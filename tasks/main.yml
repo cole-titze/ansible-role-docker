@@ -60,7 +60,7 @@
     - item not in ansible_facts.getent_group["docker"][2]
   with_items: "{{ docker_users }}"
 
-- include_tasks: docker-users.yml
+- include_tasks: docker-setup/docker-users.yml
   when: at_least_one_user_to_modify is defined
 
   # Call other scripts
