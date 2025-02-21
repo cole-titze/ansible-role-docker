@@ -1,5 +1,26 @@
 ---
+- name: Ensure /var/llm-models directory exists
+  ansible.builtin.file:
+    path: /var/llm-models
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 
+# Grab the newest local model
+- name: Copy LLM backup if present
+  ansible.builtin.copy:
+    src: ~/Desktop/Backups/LLM/model.gguf
+    dest: "/var/llm-models"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+    directory_mode: '0755'
+    remote_src: false
+    force: false
+  when: lookup('fileglob', '~/Desktop/Backups/LLM/model.gguf', errors='ignore') | length > 0
+
+# Setup docker
 - name: Pull LLM Web Backend Docker image
   community.docker.docker_image:
     name: ghcr.io/cole-titze/containers/llm-web-backend:latest
@@ -45,24 +66,3 @@
     user: "{{ ansible_user }}"
     state: present
   diff: no
-
-- name: Ensure /var/llm-models directory exists
-  ansible.builtin.file:
-    path: /var/llm-models
-    state: directory
-    mode: '0755'
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-
-# Grab the newest local model
-- name: Copy LLM backup if present
-  ansible.builtin.copy:
-    src: ~/Desktop/Backups/LLM/model.gguf
-    dest: "/var/llm-models"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0644'
-    directory_mode: '0755'
-    remote_src: false
-    force: false
-  when: lookup('fileglob', '~/Desktop/Backups/LLM/model.gguf', errors='ignore') | length > 0

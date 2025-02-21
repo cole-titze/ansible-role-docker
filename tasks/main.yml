@@ -66,9 +66,6 @@
   when: at_least_one_user_to_modify is defined
 
   # Call other scripts
-- name: Add cgroups
-  ansible.builtin.import_tasks: docker-setup/enable-cgroups.yml
-
 - name: Add docker users
   ansible.builtin.import_tasks: docker-setup/docker-users.yml
 
