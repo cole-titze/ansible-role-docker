@@ -57,7 +57,7 @@
 # Grab the newest local model
 - name: Find the newest GGUF file in source directory
   ansible.builtin.find:
-    paths: ~/Desktop/Backups/LLM
+    paths: "{{ lookup('env', 'HOME') }}/Desktop/Backups/LLM"
     patterns: "*.gguf"
     file_type: file
     follow: yes
