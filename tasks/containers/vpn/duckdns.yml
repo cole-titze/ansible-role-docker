@@ -26,6 +26,14 @@
     state: started
     enabled: yes
 
+- name: Create duck.log file
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/duckdns/duck.log"
+    state: touch
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
+
 - name: Run DuckDNS script manually
   ansible.builtin.command: "/home/{{ ansible_user }}/duckdns/duck.sh"
   register: duckdns_script_output
