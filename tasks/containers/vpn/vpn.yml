@@ -1,0 +1,45 @@
+---
+- name: Setup DuckDns
+  ansible.builtin.import_tasks: duckdns.yml
+
+- name: Create a custom Docker network for WireGuard
+  docker_network:
+    name: wireguard-net
+    state: present
+
+- name: Ensure /var/wireguard directory exists
+  ansible.builtin.file:
+    path: /var/wireguard
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Copy WireGuard configuration files to the container config directory
+  copy:
+    src: "{{ ansible-files-path }}/wireguard/wg0.conf"
+    dest: /var/wireguard/wg0.conf
+    mode: '0644'
+
+- name: Run WireGuard container in Docker
+  docker_container:
+    name: wireguard
+    image: ghcr.io/linuxserver/wireguard:latest
+    state: started
+    restart_policy: unless-stopped
+    networks:
+      - name: wireguard-net
+    ports:
+      - "51820:51820/udp"
+    volumes:
+      - /var/wireguard:/config
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+
+- name: Ensure WireGuard container is running
+  docker_container:
+    name: wireguard
+    state: started
+    restart_policy: unless-stopped

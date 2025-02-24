@@ -70,22 +70,22 @@
   ansible.builtin.import_tasks: docker-setup/docker-users.yml
 
 - name: Add portainer
-  ansible.builtin.import_tasks: containers/portainer.yml
+  ansible.builtin.import_tasks: containers/portainer/portainer.yml
 
 - name: Add pi-hole
-  ansible.builtin.import_tasks: containers/pi-hole.yml
+  ansible.builtin.import_tasks: containers/pi-hole/pi-hole.yml
 
 - name: Add home-assistant
-  ansible.builtin.import_tasks: containers/home-assistant.yml
+  ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
 
 - name: Add magic mirror
-  ansible.builtin.import_tasks: containers/magic-mirror.yml
+  ansible.builtin.import_tasks: containers/magic-mirror/magic-mirror.yml
 
 - name: Add llm web backend
-  ansible.builtin.import_tasks: containers/llm-web-backend.yml
+  ansible.builtin.import_tasks: containers/llm-web-backend/llm-web-backend.yml
 
 - name: Add esphome
-  ansible.builtin.import_tasks: containers/esphome.yml
+  ansible.builtin.import_tasks: containers/esphome/esphome.yml
 
 - name: Reboot the machine if any changes were made
   ansible.builtin.reboot:

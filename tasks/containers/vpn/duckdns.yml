@@ -1,0 +1,36 @@
+# tasks/duckdns.yml
+---
+- name: Create DuckDNS directory
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/duckdns"
+    state: directory
+    mode: '0755'
+
+- name: Create duck.sh script
+  ansible.builtin.template:
+    src: duck.sh.j2
+    dest: "/home/{{ ansible_user }}/duckdns/duck.sh"
+    mode: '0700'
+
+- name: Ensure cron job is present
+  ansible.builtin.cron:
+    name: "Update DuckDNS every 5 minutes"
+    job: "/home/{{ ansible_user }}/duckdns/duck.sh >/dev/null 2>&1"
+    minute: "*/5"
+
+- name: Ensure cron service is running
+  ansible.builtin.service:
+    name: cron
+    state: started
+    enabled: yes
+
+- name: Run DuckDNS script manually
+  ansible.builtin.command: "/home/{{ ansible_user }}/duckdns/duck.sh"
+  register: duckdns_script_output
+  changed_when: false
+
+- name: Validate DuckDNS script output
+  ansible.builtin.command: cat ""/home/{{ ansible_user }}/duckdns/duck.log"
+  register: duckdns_log_output
+  changed_when: false
+  failed_when: "'OK' not in duckdns_log_output.stdout"

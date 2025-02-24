@@ -10,7 +10,7 @@
 # Grab the newest local model
 - name: Copy LLM backup if present
   ansible.builtin.copy:
-    src: ~/Desktop/Backups/LLM/model.gguf
+    src: "{{ ansible-files-path }}/backups/LLM/model.gguf"
     dest: "/var/llm-models"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -18,7 +18,7 @@
     directory_mode: '0755'
     remote_src: false
     force: false
-  when: lookup('fileglob', '~/Desktop/Backups/LLM/model.gguf', errors='ignore') | length > 0
+  when: lookup('fileglob', '{{ ansible-files-path }}/backups/LLM/model.gguf', errors='ignore') | length > 0
 
 # Setup docker
 - name: Pull LLM Web Backend Docker image

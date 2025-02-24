@@ -102,7 +102,7 @@
 
 - name: Copy Home Assistant backups if present
   ansible.builtin.copy:
-    src: ~/Desktop/Backups/HA/
+    src: "{{ ansible-files-path }}/backups/home-assistant/
     dest: "/home/{{ ansible_user }}/backups/homeassistant"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
