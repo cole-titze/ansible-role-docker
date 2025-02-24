@@ -87,6 +87,9 @@
 - name: Add esphome
   ansible.builtin.import_tasks: containers/esphome/esphome.yml
 
+- name: Add pivpn
+  ansible.builtin.import_tasks: containers/vpn/vpn.yml
+
 - name: Reboot the machine if any changes were made
   ansible.builtin.reboot:
     msg: "Rebooting as part of Ansible playbook"
