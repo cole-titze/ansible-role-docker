@@ -18,7 +18,7 @@
     directory_mode: '0755'
     remote_src: false
     force: false
-  when: lookup('fileglob', '{{ ansible_files_path }}/backups/LLM/model.gguf', errors='ignore') | length > 0
+  when: lookup('fileglob', ansible_files_path + '/backups/LLM/model.gguf', errors='ignore') | length > 0
 
 # Setup docker
 - name: Pull LLM Web Backend Docker image

@@ -30,7 +30,7 @@
   changed_when: false
 
 - name: Validate DuckDNS script output
-  ansible.builtin.command: cat ""/home/{{ ansible_user }}/duckdns/duck.log"
+  ansible.builtin.command: cat "/home/{{ ansible_user }}/duckdns/duck.log"
   register: duckdns_log_output
   changed_when: false
   failed_when: "'OK' not in duckdns_log_output.stdout"
