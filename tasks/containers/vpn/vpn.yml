@@ -26,7 +26,7 @@
 
 - name: Extract the backup archive if /etc/wireguard is missing
   ansible.builtin.unarchive:
-    src: /home/{{ ansible_user }}/wireguard_backup.tar.gz  # Change path if needed
+    src: /home/{{ ansible_user }}/wireguard-backup/wireguard-backup.tar.gz  # Change path if needed
     dest: /
     remote_src: true
   when: not wireguard_dir.stat.exists
