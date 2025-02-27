@@ -16,68 +16,40 @@
 # 1. Transfer Backup Files
 - name: Transfer WireGuard backup
   ansible.builtin.copy:
-    src: "{{ ansible_files_path }}/backups/vpn/wireguard-backup.tar.gz"
-    dest: /tmp/wireguard-backup.tar.gz
-    mode: '0644'
-
-- name: Transfer PiVPN backup
-  ansible.builtin.copy:
-    src: "{{ ansible_files_path }}/backups/vpn/pivpn-backup.tar.gz"
-    dest: /tmp/pivpn-backup.tar.gz
+    src: "{{ ansible_files_path }}/backups/vpn/pivpn.tgz"
+    dest: /home/{{ ansible_user }}/wireguard-backup.tar.gz
     mode: '0644'
 
 # 2. Extract Backups
-- name: Extract WireGuard backup
+- name: Extract the backup archive
   ansible.builtin.unarchive:
-    src: /tmp/wireguard-backup.tar.gz
-    dest: /etc/wireguard
+    src: /home/{{ ansible_user }}/wireguard_backup.tar.gz  # Change path if needed
+    dest: /
     remote_src: true
-    extra_opts: [--no-overwrite-dir]
 
-- name: Extract PiVPN backup
-  ansible.builtin.unarchive:
-    src: /tmp/pivpn-backup.tar.gz
-    dest: /etc/pivpn
-    remote_src: true
-    extra_opts: [--no-overwrite-dir]
-
-# 3. Set Permissions
-- name: Set permissions for WireGuard files
-  ansible.builtin.file:
-    path: /etc/wireguard
-    state: directory
-    owner: root
-    group: root
-    mode: '0700'
-    recurse: true
-
-- name: Set permissions for PiVPN files
-  ansible.builtin.file:
-    path: /etc/pivpn
-    state: directory
-    owner: root
-    group: root
-    mode: '0700'
-    recurse: true
+- name: Restore the extracted WireGuard configuration
+  ansible.builtin.command:
+    cmd: cp -r etc/wireguard /etc
+  changed_when: false
 
 # 4. Pull and Run Docker Container
-- name: Pull WireGuard PiVPN Docker image
-  community.docker.docker_image:
-    name: ghcr.io/pivpn/pivpn
-    tag: latest
-    source: pull
+# - name: Pull WireGuard PiVPN Docker image
+#   community.docker.docker_image:
+#     name: ghcr.io/pivpn/pivpn
+#     tag: latest
+#     source: pull
 
-- name: Run WireGuard PiVPN Docker container
-  community.docker.docker_container:
-    name: pivpn-wireguard
-    image: ghcr.io/pivpn/pivpn:latest
-    restart_policy: unless-stopped
-    network_mode: host
-    volumes:
-      - /etc/wireguard:/etc/wireguard
-      - /etc/pivpn:/etc/pivpn
-    capabilities:
-      - NET_ADMIN
-      - SYS_MODULE
-    env:
-      VPN: wireguard
+# - name: Run WireGuard PiVPN Docker container
+#   community.docker.docker_container:
+#     name: pivpn-wireguard
+#     image: ghcr.io/pivpn/pivpn:latest
+#     restart_policy: unless-stopped
+#     network_mode: host
+#     volumes:
+#       - /etc/wireguard:/etc/wireguard
+#       - /etc/pivpn:/etc/pivpn
+#     capabilities:
+#       - NET_ADMIN
+#       - SYS_MODULE
+#     env:
+#       VPN: wireguard
