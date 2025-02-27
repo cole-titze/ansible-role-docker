@@ -23,13 +23,13 @@
 # 2. Extract Backups
 - name: Extract the backup archive
   ansible.builtin.unarchive:
-    src: /home/{{ ansible_user }}/wireguard_backup.tar.gz  # Change path if needed
-    dest: /
+    src: /home/{{ ansible_user }}/wireguard-backup.tar.gz  # Change path if needed
+    dest: /home/{{ ansible_user }}/wireguard-backup
     remote_src: true
 
 - name: Restore the extracted WireGuard configuration
   ansible.builtin.command:
-    cmd: cp -r etc/wireguard /etc
+    cmd: cp -r /home/{{ ansible_user }}/wireguard-backup/etc/wireguard /etc
   changed_when: false
 
 # 4. Pull and Run Docker Container
