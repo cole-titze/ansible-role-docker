@@ -18,20 +18,20 @@
 - name: Transfer WireGuard backup
   ansible.builtin.copy:
     src: "{{ ansible_files_path }}/backups/vpn/pivpn.tgz"
-    dest: /home/{{ ansible_user }}/wireguard-backup.tar.gz
+    dest: /home/{{ ansible_user }}/wireguard-backup/wireguard-backup.tar.gz
     mode: '0644'
 
-# 2. Extract Backups
-- name: Extract the backup archive
-  ansible.builtin.unarchive:
-    src: /home/{{ ansible_user }}/wireguard-backup.tar.gz  # Change path if needed
-    dest: /home/{{ ansible_user }}/wireguard-backup
-    remote_src: true
+- name: Check if /etc/wireguard exists
+  ansible.builtin.stat:
+    path: /etc/wireguard
+  register: wireguard_dir
 
-- name: Restore the extracted WireGuard configuration
-  ansible.builtin.command:
-    cmd: cp -r /home/{{ ansible_user }}/wireguard-backup/etc/wireguard /etc
-  changed_when: false
+- name: Extract the backup archive if /etc/wireguard is missing
+  ansible.builtin.unarchive:
+    src: /home/{{ ansible_user }}/wireguard_backup.tar.gz  # Change path if needed
+    dest: /
+    remote_src: true
+  when: not wireguard_dir.stat.exists
 
 # 4. Pull and Run Docker Container
 # - name: Pull WireGuard PiVPN Docker image
