@@ -10,8 +10,6 @@
     group: "{{ ansible_user }}"
     mode: '0755'
   loop:
-    - /etc/wireguard
-    - /etc/pivpn
     - /home/{{ ansible_user }}/wireguard-backup
 
 # 1. Transfer Backup Files
