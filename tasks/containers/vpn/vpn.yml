@@ -5,13 +5,13 @@
 # 1. Transfer Backup Files
 - name: Transfer WireGuard backup
   ansible.builtin.copy:
-    src: "{{ ansible_files_path }}/vpn/wireguard-backup.tar.gz"
+    src: "{{ ansible_files_path }}/backups/vpn/wireguard-backup.tar.gz"
     dest: /tmp/wireguard-backup.tar.gz
     mode: '0644'
 
 - name: Transfer PiVPN backup
   ansible.builtin.copy:
-    src: "{{ ansible_files_path }}/vpn/pivpn-backup.tar.gz"
+    src: "{{ ansible_files_path }}/backups/vpn/pivpn-backup.tar.gz"
     dest: /tmp/pivpn-backup.tar.gz
     mode: '0644'
 
