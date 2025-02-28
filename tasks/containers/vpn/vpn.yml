@@ -15,7 +15,7 @@
 # 1. Transfer Backup Files
 - name: Transfer WireGuard backup
   ansible.builtin.copy:
-    src: "{{ ansible_files_path }}/backups/vpn/pivpn.tgz"
+    src: "{{ ansible_files_path }}/backups/vpn/wireguard-backup.tar.gz"
     dest: /home/{{ ansible_user }}/wireguard-backup/wireguard-backup.tar.gz
     mode: '0644'
 
@@ -27,28 +27,28 @@
 - name: Extract the backup archive if /etc/wireguard is missing
   ansible.builtin.unarchive:
     src: /home/{{ ansible_user }}/wireguard-backup/wireguard-backup.tar.gz  # Change path if needed
-    dest: /
+    dest: /etc
     remote_src: true
   when: not wireguard_dir.stat.exists
 
-# 4. Pull and Run Docker Container
-# - name: Pull WireGuard PiVPN Docker image
-#   community.docker.docker_image:
-#     name: ghcr.io/pivpn/pivpn
-#     tag: latest
-#     source: pull
-
-# - name: Run WireGuard PiVPN Docker container
-#   community.docker.docker_container:
-#     name: pivpn-wireguard
-#     image: ghcr.io/pivpn/pivpn:latest
-#     restart_policy: unless-stopped
-#     network_mode: host
-#     volumes:
-#       - /etc/wireguard:/etc/wireguard
-#       - /etc/pivpn:/etc/pivpn
-#     capabilities:
-#       - NET_ADMIN
-#       - SYS_MODULE
-#     env:
-#       VPN: wireguard
+- name: Deploy WireGuard container
+  docker_container:
+    name: wireguard
+    image: lscr.io/linuxserver/wireguard:latest
+    state: started
+    restart_policy: unless-stopped
+    capabilities:
+      - NET_ADMIN
+      - SYS_MODULE
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "America/Chicago"
+      SERVERPORT: "51820"
+    published_ports:
+      - "51820:51820/udp"
+    volumes:
+      - "/etc/wireguard:/config"
+      - "/lib/modules:/lib/modules"
+    sysctls:
+      "net.ipv4.conf.all.src_valid_mark": "1"
