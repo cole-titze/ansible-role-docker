@@ -34,7 +34,7 @@
 - name: Deploy WireGuard container
   docker_container:
     name: wireguard
-    image: lscr.io/linuxserver/wireguard:latest
+    image: docker.io/linuxserver/wireguard:latest
     state: started
     restart_policy: unless-stopped
     capabilities:
