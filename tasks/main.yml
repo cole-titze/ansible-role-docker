@@ -90,6 +90,9 @@
 - name: Add pivpn
   ansible.builtin.import_tasks: containers/vpn/vpn.yml
 
+- name: Add nfs
+  ansible.builtin.import_tasks: containers/nfs/nfs.yml
+
 - name: Reboot the machine if any changes were made
   ansible.builtin.reboot:
     msg: "Rebooting as part of Ansible playbook"
