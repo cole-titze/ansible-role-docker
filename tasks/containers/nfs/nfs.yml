@@ -1,0 +1,22 @@
+---
+- name: Ensure NFS export directory exists
+  file:
+    path: "/home/{{ ansible_user }}/nfs"
+    state: directory
+    mode: '0777'
+  tags: storage
+
+- name: Ensure Docker container is running
+  docker_container:
+    name: nfs-server
+    image: ghcr.io/cole-titze/nfs:latest
+    restart_policy: always
+    privileged: yes
+    ports:
+      - "111:111/udp"
+      - "111:111/tcp"
+      - "2049:2049/tcp"
+      - "2049:2049/udp"
+    volumes:
+      - "/home/pi/nfs:/export"
+  tags: deploy
