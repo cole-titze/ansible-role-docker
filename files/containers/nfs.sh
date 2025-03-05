@@ -6,4 +6,5 @@ docker run -d --name nfs-server \
   --privileged \
   --network=host \
   -v /nfs_share:/nfs_share \
+  -v /lib/modules:/lib/modules:ro \
   nfs-server
