@@ -5,17 +5,39 @@
     state: directory
     mode: '0777'
 
-- name: Ensure Docker container is running
-  docker_container:
-    name: nfs-server
-    image: ghcr.io/cole-titze/containers/nfs:latest
-    restart_policy: always
+- name: Run NFS server container
+  community.docker.docker_container:
+    name: nfs
+    image: nfs
     privileged: yes
-    ports:
-      - "111:111/udp"
-      - "111:111/tcp"
-      - "2049:2049/tcp"
-      - "2049:2049/udp"
+    network_mode: host
+    restart_policy: always
     volumes:
-      - "/home/{{ ansible_user }}/nfs_share:/export"
-  tags: deploy
+      - /nfs_share:/nfs_share
+
+# Setup nightly updates
+- name: Copy nfs update script
+  ansible.builtin.copy:
+    src: files/containers/nfs.sh
+    dest: /usr/local/bin/nfs.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Ensure update script is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/nfs.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
+
+- name: Schedule nfs update via cron
+  ansible.builtin.cron:
+    name: "Update nfs container"
+    minute: "0"
+    hour: "3"
+    job: "/bin/bash /usr/local/bin/nfs.sh"
+    user: "{{ ansible_user }}"
+    state: present
+  diff: no
