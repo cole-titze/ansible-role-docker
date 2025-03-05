@@ -1,10 +1,9 @@
 ---
-- name: Ensure NFS export directory exists
-  file:
-    path: "/home/{{ ansible_user }}/nfs"
+- name: Create NFS share directory
+  ansible.builtin.file:
+    path: /nfs_share
     state: directory
     mode: '0777'
-  tags: storage
 
 - name: Ensure Docker container is running
   docker_container:
@@ -18,5 +17,5 @@
       - "2049:2049/tcp"
       - "2049:2049/udp"
     volumes:
-      - "/home/pi/nfs:/export"
+      - "/home/{{ ansible_user }}/nfs_share:/export"
   tags: deploy
