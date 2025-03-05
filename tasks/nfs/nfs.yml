@@ -1,0 +1,25 @@
+---
+- name: Install NFS server package
+  ansible.builtin.apt:
+    name: nfs-kernel-server
+    state: present
+    update_cache: yes
+
+- name: Ensure NFS share directory exists
+  ansible.builtin.file:
+    path: /rpi_nfs_share
+    state: directory
+    mode: '0777'
+
+- name: Configure NFS exports
+  ansible.builtin.copy:
+    dest: /etc/exports
+    content: |
+      /rpi_nfs_share *(rw,sync,no_subtree_check,no_root_squash)
+    mode: '0644'
+
+- name: Restart NFS service
+  ansible.builtin.service:
+    name: nfs-kernel-server
+    state: restarted
+    enabled: yes
