@@ -65,33 +65,33 @@
 - include_tasks: docker-setup/docker-users.yml
   when: at_least_one_user_to_modify is defined
 
-  # Call other scripts
-- name: Add docker users
-  ansible.builtin.import_tasks: docker-setup/docker-users.yml
+# Comment out containers to use. Kubernetes now handles most of these
+# - name: Add docker users
+#   ansible.builtin.import_tasks: docker-setup/docker-users.yml
 
-- name: Add portainer
-  ansible.builtin.import_tasks: containers/portainer/portainer.yml
+# - name: Add portainer
+#   ansible.builtin.import_tasks: containers/portainer/portainer.yml
 
-- name: Add pi-hole
-  ansible.builtin.import_tasks: containers/pi-hole/pi-hole.yml
+# - name: Add pi-hole
+#   ansible.builtin.import_tasks: containers/pi-hole/pi-hole.yml
 
-- name: Add home-assistant
-  ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
+# - name: Add home-assistant
+#   ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
 
-- name: Add magic mirror
-  ansible.builtin.import_tasks: containers/magic-mirror/magic-mirror.yml
+# - name: Add magic mirror
+#   ansible.builtin.import_tasks: containers/magic-mirror/magic-mirror.yml
 
-- name: Add llm web backend
-  ansible.builtin.import_tasks: containers/llm-web-backend/llm-web-backend.yml
+# - name: Add llm web backend
+#   ansible.builtin.import_tasks: containers/llm-web-backend/llm-web-backend.yml
 
-- name: Add esphome
-  ansible.builtin.import_tasks: containers/esphome/esphome.yml
+# - name: Add esphome
+#   ansible.builtin.import_tasks: containers/esphome/esphome.yml
+
+# - name: Add nfs
+#   ansible.builtin.import_tasks: containers/nfs/nfs.yml
 
 - name: Add pivpn
-  ansible.builtin.import_tasks: containers/vpn/vpn.yml
-
-- name: Add nfs
-  ansible.builtin.import_tasks: containers/nfs/nfs.yml
+  ansible.builtin.import_tasks: services/vpn/vpn.yml
 
 - name: Check if a reboot is required.
   stat:

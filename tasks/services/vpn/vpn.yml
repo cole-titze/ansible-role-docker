@@ -30,25 +30,3 @@
     dest: /etc
     remote_src: true
   when: not wireguard_dir.stat.exists
-
-- name: Deploy WireGuard container
-  docker_container:
-    name: wireguard
-    image: docker.io/linuxserver/wireguard:latest
-    state: started
-    restart_policy: unless-stopped
-    capabilities:
-      - NET_ADMIN
-      - SYS_MODULE
-    env:
-      PUID: "1000"
-      PGID: "1000"
-      TZ: "America/Chicago"
-      SERVERPORT: "51820"
-    published_ports:
-      - "51820:51820/udp"
-    volumes:
-      - "/etc/wireguard:/config"
-      - "/lib/modules:/lib/modules"
-    sysctls:
-      "net.ipv4.conf.all.src_valid_mark": "1"
