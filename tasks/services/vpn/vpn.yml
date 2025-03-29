@@ -19,34 +19,26 @@
     dest: /home/{{ ansible_user }}/wireguard-backup/wireguard-backup.tar.gz
     mode: '0644'
 
-- name: Check if /etc/wireguard/configs/clients.txt exists and is blank
-  ansible.builtin.shell: |
-    if [ -s /etc/wireguard/configs/clients.txt ]; then
-      echo "not blank"
-    else
-      echo "blank"
-    fi
-  register: clients_txt_status
-
-- name: Show variable value
-  ansible.builtin.debug:
-    var: clients_txt_status.stdout
+- name: Get file details
+  ansible.builtin.stat:
+    path: /etc/wireguard/configs/clients.txt
+  register: file_info
 
 - name: Stop PiVPN (WireGuard)
   ansible.builtin.service:
     name: wg-quick@wg0
     state: stopped
-  when: clients_txt_status.stdout == "blank"
+  when: file_info.stat.size == 0
 
 - name: Extract the backup archive if /etc/wireguard is missing
   ansible.builtin.unarchive:
     src: /home/{{ ansible_user }}/wireguard-backup/wireguard-backup.tar.gz
     dest: /etc
     remote_src: true
-  when: clients_txt_status.stdout == "blank"
+  when: file_info.stat.size == 0
 
 - name: Start PiVPN (WireGuard)
   ansible.builtin.service:
     name: wg-quick@wg0
     state: started
-  when: clients_txt_status.stdout == "blank"
+  when: file_info.stat.size == 0
