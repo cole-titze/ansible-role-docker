@@ -32,6 +32,7 @@
   ansible.builtin.service:
     name: wg-quick@wg0
     state: stopped
+  when: clients_txt_status.stdout == "blank"
 
 - name: Extract the backup archive if /etc/wireguard is missing
   ansible.builtin.unarchive:
@@ -44,3 +45,4 @@
   ansible.builtin.service:
     name: wg-quick@wg0
     state: started
+  when: clients_txt_status.stdout == "blank"
