@@ -25,5 +25,8 @@
     - ufw allow 6052/tcp
 
 - name: Enable UFW with automatic confirmation
-  command: yes | ufw enable
-  ignore_errors: yes  # In case UFW is already enabled, don't fail the playbook
+  expect:
+    command: ufw enable
+    responses:
+      'Command may disrupt existing ssh connections. Proceed with operation (y|n)?': 'y'
+    timeout: 30
