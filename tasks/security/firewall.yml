@@ -25,8 +25,5 @@
     - ufw allow 6052/tcp
 
 - name: Enable UFW with automatic confirmation
-  expect:
-    command: ufw enable
-    responses:
-      'Command may disrupt existing ssh connections. Proceed with operation (y|n)?': 'y'
-    timeout: 30
+  shell: echo "y" | ufw enable
+  timeout: 30
