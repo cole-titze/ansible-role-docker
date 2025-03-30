@@ -96,8 +96,9 @@
 - name: Add unbound
   ansible.builtin.import_tasks: services/unbound/unbound.yml
 
-- name: Add firewall
-  ansible.builtin.import_tasks: security/firewall.yml
+# TODO: This takes down wifi currently
+# - name: Add firewall
+#   ansible.builtin.import_tasks: security/firewall.yml
 
 - name: Check if a reboot is required.
   stat:
