@@ -1,46 +1,42 @@
-- name: Install and Configure Unbound for Pi-hole
-  hosts: docker
-  become: true
-  tasks:
+---
+- name: Install Unbound
+  ansible.builtin.apt:
+    name: unbound
+    state: present
+    update_cache: yes
 
-    - name: Install Unbound
-      ansible.builtin.apt:
-        name: unbound
-        state: present
-        update_cache: yes
+- name: Configure Unbound for Pi-hole
+  ansible.builtin.copy:
+    dest: /etc/unbound/unbound.conf.d/pi-hole.conf
+    content: |
+      server:
+          verbosity: 1
+          interface: 127.0.0.1
+          port: 5335
+          do-ip4: yes
+          do-udp: yes
+          do-tcp: yes
+          do-ip6: no
+          harden-glue: yes
+          harden-dnssec-stripped: yes
+          use-caps-for-id: no
+          edns-buffer-size: 1232
+          prefetch: yes
+          num-threads: 1
+          so-rcvbuf: 1m
+          cache-min-ttl: 3600
+          cache-max-ttl: 86400
+          msg-cache-size: 128k
+          rrset-cache-size: 256k
+          key-cache-size: 128k
+          neg-cache-size: 128k
+          include: /etc/unbound/unbound.conf.d/*.conf
+    owner: root
+    group: root
+    mode: "0644"
 
-    - name: Configure Unbound for Pi-hole
-      ansible.builtin.copy:
-        dest: /etc/unbound/unbound.conf.d/pi-hole.conf
-        content: |
-          server:
-              verbosity: 1
-              interface: 127.0.0.1
-              port: 5335
-              do-ip4: yes
-              do-udp: yes
-              do-tcp: yes
-              do-ip6: no
-              harden-glue: yes
-              harden-dnssec-stripped: yes
-              use-caps-for-id: no
-              edns-buffer-size: 1232
-              prefetch: yes
-              num-threads: 1
-              so-rcvbuf: 1m
-              cache-min-ttl: 3600
-              cache-max-ttl: 86400
-              msg-cache-size: 128k
-              rrset-cache-size: 256k
-              key-cache-size: 128k
-              neg-cache-size: 128k
-              include: /etc/unbound/unbound.conf.d/*.conf
-        owner: root
-        group: root
-        mode: "0644"
-
-    - name: Restart and Enable Unbound
-      ansible.builtin.systemd:
-        name: unbound
-        state: restarted
-        enabled: yes
+- name: Restart and Enable Unbound
+  ansible.builtin.systemd:
+    name: unbound
+    state: restarted
+    enabled: yes
