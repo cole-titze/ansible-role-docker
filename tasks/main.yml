@@ -96,6 +96,9 @@
 - name: Add unbound
   ansible.builtin.import_tasks: services/unbound/unbound.yml
 
+- name: Add firewall
+  ansible.builtin.import_tasks: services/security/firewall.yml
+
 - name: Check if a reboot is required.
   stat:
     path: /var/run/reboot-required

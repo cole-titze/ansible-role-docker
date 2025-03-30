@@ -1,0 +1,41 @@
+---
+- name: Set up UFW firewall on Raspberry Pis
+  hosts: docker
+  become: true
+  tasks:
+    - name: Install UFW
+      apt:
+        name: ufw
+        state: present
+
+    - name: Set default firewall rules
+      command: "{{ item }}"
+      loop:
+        - ufw default deny incoming
+        - ufw default allow outgoing
+
+    - name: Allow essential services
+      command: "{{ item }}"
+      loop:
+        - ufw allow 22/tcp
+        - ufw allow 53/tcp
+        - ufw allow 53/udp
+        - ufw allow 51820/udp
+        - ufw allow 80/tcp
+        - ufw allow 443/tcp
+        - ufw allow 8123/tcp
+        - ufw allow 8083/tcp
+        - ufw allow 6123/tcp
+        - ufw allow 6052/tcp
+
+    - name: Enable UFW
+      command: ufw enable
+      ignore_errors: true  # Prevent playbook failure if already enabled
+
+    - name: Check UFW status
+      command: ufw status verbose
+      register: ufw_status
+
+    - name: Show firewall rules
+      debug:
+        msg: "{{ ufw_status.stdout }}"
