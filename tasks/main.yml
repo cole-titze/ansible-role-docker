@@ -75,9 +75,6 @@
 # - name: Add pi-hole
 #   ansible.builtin.import_tasks: containers/pi-hole/pi-hole.yml
 
-# - name: Add home-assistant
-#   ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
-
 # - name: Add magic mirror
 #   ansible.builtin.import_tasks: containers/magic-mirror/magic-mirror.yml
 
@@ -90,8 +87,14 @@
 # - name: Add nfs
 #   ansible.builtin.import_tasks: containers/nfs/nfs.yml
 
+- name: Add home-assistant
+  ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
+
 - name: Add pivpn
   ansible.builtin.import_tasks: services/vpn/vpn.yml
+
+- name: Add pivpn
+  ansible.builtin.import_tasks: services/unbound/unbound.yml
 
 - name: Check if a reboot is required.
   stat:

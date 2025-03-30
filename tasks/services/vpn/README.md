@@ -7,12 +7,6 @@
 ```
 curl -L https://install.pivpn.io | bash
 ```
-- Add to crontab
-```
-# Constant updates
-# VPN setup will add script here, an example:
-*/5 * * * * ~/duckdns/duck.sh >/dev/null 2>&1
-```
 
 ## During Install
 - Use pi ip (10.0.0.61) for DNS ip
