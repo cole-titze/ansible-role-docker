@@ -6,4 +6,5 @@
 curl -sSL https://install.pi-hole.net | bash
 curl -L https://install.pivpn.io | bash
 ```
++ Restore backup in settings > teleporter > add the backup file
 + DNS Name: perkaholic.duckdns.org
