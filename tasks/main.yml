@@ -93,7 +93,7 @@
 - name: Add pivpn
   ansible.builtin.import_tasks: services/vpn/vpn.yml
 
-- name: Add pivpn
+- name: Add unbound
   ansible.builtin.import_tasks: services/unbound/unbound.yml
 
 - name: Check if a reboot is required.
