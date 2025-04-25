@@ -11,7 +11,7 @@
 - name: Run Home Assistant Docker container
   community.docker.docker_container:
     name: home-assistant
-    image: homeassistant/raspberrypi4-homeassistant
+    image: homeassistant/home-assistant:stable
     state: started
     restart_policy: always
     network_mode: host
