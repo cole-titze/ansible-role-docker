@@ -90,6 +90,9 @@
 - name: Add home-assistant
   ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
 
+- name: Add code-space
+  ansible.builtin.import_tasks: containers/code-space/code-space.yml
+
 - name: Add pivpn
   ansible.builtin.import_tasks: services/vpn/vpn.yml
 
