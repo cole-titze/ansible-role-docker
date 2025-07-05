@@ -18,9 +18,13 @@
     image: ghcr.io/cole-titze/containers/code-space:latest
     state: started
     restart_policy: always
+    volumes:
+      - /var/code-space:/code-space
     ports:
-      - "8082:8082"
+      - "8090:8090"
     detach: true
+    env:
+      PASSWORD: "{{ code_space_password }}"
 
 # Setup nightly updates
 - name: Copy code space update script
