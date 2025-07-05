@@ -14,6 +14,7 @@ curl -L https://install.pivpn.io | bash
 + 8123 - Home Assistant
 + 8083 - LLM Backend
 + 8000, 9443 - Portainer
++ 8090 - Code Spaces
 + 22 - ssh
 + 53, 80, 443 - PiHole
 + 51820 - Wireguard
