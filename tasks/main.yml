@@ -87,6 +87,9 @@
 # - name: Add nfs
 #   ansible.builtin.import_tasks: containers/nfs/nfs.yml
 
+- name: Add traefik
+  ansible.builtin.import_tasks: containers/traefik/traefik.yml
+
 - name: Add home-assistant
   ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
 
