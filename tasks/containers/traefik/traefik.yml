@@ -11,40 +11,147 @@
     group: root
     mode: '0755'
 
-- name: Generate private key for code.deploypi
+- name: Generate CA private key
   community.crypto.openssl_privatekey:
-    path: /opt/traefik/certs/code.key
-    size: 2048
+    path: /opt/traefik/certs/ca.key
+    size: 4096
+    type: RSA
     state: present
     mode: '0600'
 
-- name: Generate self-signed cert for code.deploypi
-  community.crypto.openssl_certificate:
-    path: /opt/traefik/certs/code.crt
+- name: Generate CA certificate
+  community.crypto.x509_certificate:
+    path: /opt/traefik/certs/ca.crt
+    privatekey_path: /opt/traefik/certs/ca.key
+    provider: selfsigned
+    selfsigned_not_after: "+3650d"  # 10 years
+    selfsigned_digest: sha256
+    subject:
+      common_name: "DeployPI Local CA"
+      country_name: "US"
+      organization_name: "DeployPI"
+      organizational_unit_name: "IT Department"
+    basic_constraints:
+      - "CA:TRUE"
+    key_usage:
+      - "keyCertSign"
+      - "cRLSign"
+    mode: '0644'
+
+- name: Generate private key for code.deploypi
+  community.crypto.openssl_privatekey:
+    path: /opt/traefik/certs/code.key
+    size: 4096
+    type: RSA
+    state: present
+    mode: '0600'
+
+- name: Generate certificate signing request
+  community.crypto.openssl_csr:
+    path: /opt/traefik/certs/code.csr
     privatekey_path: /opt/traefik/certs/code.key
     subject:
       common_name: code.deploypi
-    provider: selfsigned
-    days: 365
+    subject_alt_name:
+      - "DNS:code.deploypi"
+      - "DNS:traefik.deploypi"
+      - "DNS:*.deploypi"
+      - "DNS:localhost"
+      - "IP:127.0.0.1"
     mode: '0644'
+
+- name: Generate signed certificate for code.deploypi
+  community.crypto.x509_certificate:
+    path: /opt/traefik/certs/code.crt
+    csr_path: /opt/traefik/certs/code.csr
+    provider: ownca
+    ownca_path: /opt/traefik/certs/ca.crt
+    ownca_privatekey_path: /opt/traefik/certs/ca.key
+    ownca_not_after: "+365d"
+    ownca_digest: sha256
+    mode: '0644'
+
+- name: Create dynamic configuration for certificates
+  ansible.builtin.copy:
+    content: |
+      tls:
+        certificates:
+          - certFile: /certs/code.crt
+            keyFile: /certs/code.key
+            stores:
+              - default
+        stores:
+          default:
+            defaultCertificate:
+              certFile: /certs/code.crt
+              keyFile: /certs/code.key
+    dest: /opt/traefik/certs/tls.yml
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create ACME storage file with proper permissions
+  ansible.builtin.file:
+    path: /opt/traefik/certs/acme.json
+    state: touch
+    owner: root
+    group: root
+    mode: '0600'
 
 - name: Start Traefik container
   community.docker.docker_container:
     name: traefik
-    image: traefik:v3.4
+    image: traefik:v3.2
     restart_policy: unless-stopped
     published_ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"  # Dashboard (optional, for monitoring)
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "/opt/traefik/certs:/certs"
+      - "/opt/traefik/certs:/certs:ro"
     command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--providers.docker=true"
-      - "--certificatesResolvers.none.acme.tlschallenge=false"
-      - "--serversTransport.insecureSkipVerify=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file.directory=/certs"
+      - "--providers.file.watch=true"
       - "--log.level=INFO"
+      - "--accesslog=true"
+      - "--metrics.prometheus=true"
     networks:
       - name: traefik
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.traefik.rule: "Host(`traefik.deploypi`)"
+      traefik.http.routers.traefik.entrypoints: "websecure"
+      traefik.http.routers.traefik.tls: "true"
+      traefik.http.services.traefik.loadbalancer.server.port: "8080"
+
+- name: Display CA certificate installation instructions
+  ansible.builtin.debug:
+    msg: |
+      ==========================================
+      CERTIFICATE AUTHORITY SETUP COMPLETE
+      ==========================================
+      
+      To avoid browser security warnings, install the CA certificate:
+      
+      1. Copy the CA certificate to your local machine:
+         scp {{ ansible_user }}@{{ inventory_hostname }}:/opt/traefik/certs/ca.crt ~/Downloads/
+      
+      2. Install the CA certificate:
+         macOS: Double-click ca.crt and add to Keychain Access (System)
+         Linux: sudo cp ca.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates
+         Windows: Double-click ca.crt and install to "Trusted Root Certification Authorities"
+      
+      3. Add to /etc/hosts (or C:\Windows\System32\drivers\etc\hosts on Windows):
+         {{ ansible_default_ipv4.address }} code.deploypi
+         {{ ansible_default_ipv4.address }} traefik.deploypi
+      
+      ==========================================
