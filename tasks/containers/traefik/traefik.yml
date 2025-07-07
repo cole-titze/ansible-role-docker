@@ -19,23 +19,30 @@
     state: present
     mode: '0600'
 
-- name: Generate CA certificate
-  community.crypto.x509_certificate:
-    path: /opt/traefik/certs/ca.crt
+- name: Generate CA certificate signing request
+  community.crypto.openssl_csr:
+    path: /opt/traefik/certs/ca.csr
     privatekey_path: /opt/traefik/certs/ca.key
-    provider: selfsigned
-    selfsigned_not_after: "+3650d"  # 10 years
-    selfsigned_digest: sha256
     subject:
-      common_name: "DeployPI Local CA"
-      country_name: "US"
-      organization_name: "DeployPI"
-      organizational_unit_name: "IT Department"
+      CN: "DeployPI Local CA"
+      C: "US"
+      O: "DeployPI"
+      OU: "IT Department"
     basic_constraints:
       - "CA:TRUE"
     key_usage:
       - "keyCertSign"
       - "cRLSign"
+    mode: '0644'
+
+- name: Generate CA certificate
+  community.crypto.x509_certificate:
+    path: /opt/traefik/certs/ca.crt
+    csr_path: /opt/traefik/certs/ca.csr
+    privatekey_path: /opt/traefik/certs/ca.key
+    provider: selfsigned
+    selfsigned_not_after: "+3650d"  # 10 years
+    selfsigned_digest: sha256
     mode: '0644'
 
 - name: Generate private key for code.deploypi
@@ -51,7 +58,7 @@
     path: /opt/traefik/certs/code.csr
     privatekey_path: /opt/traefik/certs/code.key
     subject:
-      common_name: code.deploypi
+      CN: code.deploypi
     subject_alt_name:
       - "DNS:code.deploypi"
       - "DNS:traefik.deploypi"
@@ -104,8 +111,8 @@
     image: traefik:v3.2
     restart_policy: unless-stopped
     published_ports:
-      - "80:80"
-      - "443:443"
+      - "7000:7000"  # HTTP on port 7000 (instead of 80)
+      - "7443:7443"  # HTTPS on port 7443 (instead of 443)
       - "8080:8080"  # Dashboard (optional, for monitoring)
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -113,8 +120,8 @@
     command:
       - "--api.dashboard=true"
       - "--api.insecure=true"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.address=:7000"
+      - "--entrypoints.websecure.address=:7443"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--providers.docker=true"
@@ -153,5 +160,10 @@
       3. Add to /etc/hosts (or C:\Windows\System32\drivers\etc\hosts on Windows):
          {{ ansible_default_ipv4.address }} code.deploypi
          {{ ansible_default_ipv4.address }} traefik.deploypi
+      
+      4. Access your services:
+         - Traefik Dashboard: https://traefik.deploypi:7443
+         - Services will be available on ports 7000 (HTTP) and 7443 (HTTPS)
+         - HTTP requests will automatically redirect to HTTPS
       
       ==========================================
