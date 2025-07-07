@@ -1,0 +1,50 @@
+- name: Ensure traefik Docker network exists
+  community.docker.docker_network:
+    name: traefik
+    driver: bridge
+
+- name: Create certs directory for Traefik
+  file:
+    path: /opt/traefik/certs
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Generate private key for code.deploypi
+  community.crypto.openssl_privatekey:
+    path: /opt/traefik/certs/code.key
+    size: 2048
+    state: present
+    mode: '0600'
+
+- name: Generate self-signed cert for code.deploypi
+  community.crypto.openssl_certificate:
+    path: /opt/traefik/certs/code.crt
+    privatekey_path: /opt/traefik/certs/code.key
+    subject:
+      common_name: code.deploypi
+    provider: selfsigned
+    days: 365
+    mode: '0644'
+
+- name: Start Traefik container
+  community.docker.docker_container:
+    name: traefik
+    image: traefik:v3.4
+    restart_policy: unless-stopped
+    published_ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/opt/traefik/certs:/certs"
+    command:
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker=true"
+      - "--certificatesResolvers.none.acme.tlschallenge=false"
+      - "--serversTransport.insecureSkipVerify=true"
+      - "--log.level=INFO"
+    networks:
+      - name: traefik

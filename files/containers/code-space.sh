@@ -2,4 +2,16 @@
 docker stop code-space
 docker rm code-space
 docker pull ghcr.io/cole-titze/containers/code-space:latest
-docker run --name code-space -p 8082:8082 -v "var/code-space:/code-space" --restart=always -d ghcr.io/cole-titze/containers/code-space:latest
+docker network create traefik  # Run once if not existing
+
+docker run -d --name code-space \
+  --restart=always \
+  -v /var/code-space:/code-space \
+  --network traefik \
+  -e PASSWORD="your_password_here" \
+  -l traefik.enable=true \
+  -l traefik.http.routers.code-space.rule="Host(`code.deploypi`)" \
+  -l traefik.http.routers.code-space.entrypoints=websecure \
+  -l traefik.http.routers.code-space.tls=true \
+  -l traefik.http.services.code-space.loadbalancer.server.port=8090 \
+  ghcr.io/cole-titze/containers/code-space:latest
