@@ -33,8 +33,8 @@
       - name: traefik
 
 # Setup nightly updates
-- name: Copy code space update script
-  ansible.builtin.copy:
+- name: Template code space update script
+  ansible.builtin.template:
     src: files/containers/code-space.sh.j2
     dest: /usr/local/bin/code-space.sh
     owner: "{{ ansible_user }}"
