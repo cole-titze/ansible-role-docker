@@ -8,7 +8,7 @@ docker run -d --name code-space \
   --restart=always \
   -v /var/code-space:/code-space \
   --network traefik \
-  -e PASSWORD="your_password_here" \
+  -e PASSWORD="{{ code_space_password }}" \
   -l traefik.enable=true \
   -l traefik.http.routers.code-space.rule="Host(`code.deploypi`)" \
   -l traefik.http.routers.code-space.entrypoints=websecure \
