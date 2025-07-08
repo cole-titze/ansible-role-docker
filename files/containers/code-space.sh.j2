@@ -10,7 +10,7 @@ docker run -d --name code-space \
   --network traefik \
   -e PASSWORD="{{ code_space_password }}" \
   -l traefik.enable=true \
-  -l traefik.http.routers.code-space.rule="Host(`code.deploypi`)" \
+  -l 'traefik.http.routers.code-space.rule="Host("code.deploypi")' \
   -l traefik.http.routers.code-space.entrypoints=websecure \
   -l traefik.http.routers.code-space.tls=true \
   -l traefik.http.services.code-space.loadbalancer.server.port=8090 \
