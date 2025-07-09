@@ -20,7 +20,6 @@
     restart_policy: always
     volumes:
       - /var/code-space:/code-space
-      - ~/.ssh:/home/coder/.ssh:ro
     labels:
       traefik.enable: "true"
       traefik.http.routers.code-space.rule: "Host(`code.deploypi`)"
