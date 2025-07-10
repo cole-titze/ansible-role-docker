@@ -4,8 +4,8 @@
     path: /var/code-space
     state: directory
     mode: '0755'
-    owner: "1000" # 1000 being the default user ID for the coder user in the code space container
-    group: "1000"
+    owner: "1001" # 1001 being the default user ID for the coder user in the code space container
+    group: "1001"
   
 - name: Pull Code Space Docker image
   community.docker.docker_image:
