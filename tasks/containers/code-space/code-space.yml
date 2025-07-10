@@ -19,7 +19,7 @@
     state: started
     restart_policy: always
     volumes:
-      - /var/code-space:/code-space
+      - /var/code-space:/home/coder
     labels:
       traefik.enable: "true"
       traefik.http.routers.code-space.rule: "Host(`code.deploypi`)"
