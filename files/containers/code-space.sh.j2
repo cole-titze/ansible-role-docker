@@ -6,7 +6,7 @@ docker network create traefik  # Run once if not existing
 
 docker run -d --name code-space \
   --restart=always \
-  -v /var/code-space:/home/coder \
+  -v /var/code-space:/home/coder/source \
   --network traefik \
   -e PASSWORD="{{ code_space_password }}" \
   -l traefik.enable=true \
