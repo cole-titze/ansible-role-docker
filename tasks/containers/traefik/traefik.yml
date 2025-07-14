@@ -111,17 +111,17 @@
     image: traefik:v3.2
     restart_policy: unless-stopped
     published_ports:
-      - "7000:7000"  # HTTP on port 7000 (instead of 80)
-      - "7443:7443"  # HTTPS on port 7443 (instead of 443)
-      - "8080:8080"  # Dashboard (optional, for monitoring)
+      - "80:80"     # HTTP
+      - "443:443"   # HTTPS
+      - "8080:8080" # Dashboard (optional, for monitoring)
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/opt/traefik/certs:/certs:ro"
     command:
       - "--api.dashboard=true"
       - "--api.insecure=true"
-      - "--entrypoints.web.address=:7000"
-      - "--entrypoints.websecure.address=:7443"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--providers.docker=true"
