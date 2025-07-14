@@ -11,7 +11,7 @@
 - name: Run Home Assistant Docker container
   community.docker.docker_container:
     name: home-assistant
-    image: homeassistant/home-assistant:stable
+    image: homeassistant/raspberrypi4-homeassistant
     state: started
     restart_policy: always
     network_mode: host
@@ -19,15 +19,13 @@
       - "/dev/ttyUSB0:/dev/ttyUSB0"
     volumes:
       - "/var/homeassistant:/config"
+    detach: true
     labels:
       traefik.enable: "true"
       traefik.http.routers.homeassistant.rule: "Host(`homeassistant.deploypi`)"
       traefik.http.routers.homeassistant.entrypoints: "websecure"
       traefik.http.routers.homeassistant.tls: "true"
       traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
-    detach: true
-    networks:
-      - name: traefik
 
 # Create backup directory
 - name: Ensure Home Assistant backups directory exists
