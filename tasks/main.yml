@@ -69,9 +69,6 @@
 # - name: Add docker users
 #   ansible.builtin.import_tasks: docker-setup/docker-users.yml
 
-# - name: Add portainer
-#   ansible.builtin.import_tasks: containers/portainer/portainer.yml
-
 # - name: Add pi-hole
 #   ansible.builtin.import_tasks: containers/pi-hole/pi-hole.yml
 
@@ -89,6 +86,9 @@
 
 - name: Add traefik
   ansible.builtin.import_tasks: containers/traefik/traefik.yml
+
+- name: Add portainer
+  ansible.builtin.import_tasks: containers/portainer/portainer.yml
 
 - name: Add home-assistant
   ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
