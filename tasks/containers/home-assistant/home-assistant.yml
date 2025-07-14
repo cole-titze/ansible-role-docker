@@ -19,6 +19,15 @@
       - "/dev/ttyUSB0:/dev/ttyUSB0"
     volumes:
       - "/var/homeassistant:/config"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.homeassistant.rule: "Host(`homeassistant.deploypi`)"
+      traefik.http.routers.homeassistant.entrypoints: "websecure"
+      traefik.http.routers.homeassistant.tls: "true"
+      traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
+    detach: true
+    networks:
+      - name: traefik
 
 # Create backup directory
 - name: Ensure Home Assistant backups directory exists
