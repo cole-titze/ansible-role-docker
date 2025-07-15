@@ -11,9 +11,6 @@
     image: portainer/portainer-ce:latest
     state: started
     restart_policy: always
-    ports:
-      - "8000:8000"
-      - "9443:9443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "portainer_data:/data"
@@ -22,7 +19,7 @@
       traefik.http.routers.portainer.rule: "Host(`portainer.deploypi`)"
       traefik.http.routers.portainer.entrypoints: "websecure"
       traefik.http.routers.portainer.tls: "true"
-      traefik.http.services.portainer.loadbalancer.server.port: "8000"
+      traefik.http.services.portainer.loadbalancer.server.port: "9000"
     detach: true
     networks:
       - name: traefik
