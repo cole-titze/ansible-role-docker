@@ -14,12 +14,13 @@
     image: homeassistant/raspberrypi4-homeassistant
     state: started
     restart_policy: always
-    network_mode: host
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
     volumes:
       - "/var/homeassistant:/config"
     detach: true
+    networks:
+      - name: traefik
     labels:
       traefik.enable: "true"
       traefik.http.routers.homeassistant.rule: "Host(`homeassistant.deploypi`)"

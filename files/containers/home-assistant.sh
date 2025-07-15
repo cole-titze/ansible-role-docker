@@ -7,7 +7,7 @@ docker run -d \
   --restart=always \
   --device /dev/ttyUSB0:/dev/ttyUSB0 \
   -v /var/homeassistant:/config \
-  --network host \
+  --network traefik \
   --label traefik.enable=true \
   --label traefik.http.routers.homeassistant.rule=Host\(`homeassistant.deploypi`\) \
   --label traefik.http.routers.homeassistant.entrypoints=websecure \
