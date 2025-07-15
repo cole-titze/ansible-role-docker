@@ -10,13 +10,13 @@
   
 - name: Ensure latest Home Assistant image is pulled
   community.docker.docker_image:
-    name: homeassistant/raspberrypi4-homeassistant
+    name: ghcr.io/home-assistant/home-assistant:stable
     source: pull
 
 - name: Run Home Assistant Docker container
   community.docker.docker_container:
     name: home-assistant
-    image: homeassistant/raspberrypi4-homeassistant
+    image: ghcr.io/home-assistant/home-assistant:stable
     state: started
     restart_policy: always
     devices:
