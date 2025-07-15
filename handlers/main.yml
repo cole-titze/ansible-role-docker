@@ -8,3 +8,8 @@
 
 - name: reboot-pi
   ansible.builtin.reboot:
+
+- name: restart unbound
+  ansible.builtin.systemd:
+    name: unbound
+    state: restarted

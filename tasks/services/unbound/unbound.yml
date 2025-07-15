@@ -85,9 +85,4 @@
     owner: root
     group: root
     mode: "0644"
-
-- name: Restart and Enable Unbound
-  ansible.builtin.systemd:
-    name: unbound
-    state: restarted
-    enabled: yes
+  notify: restart unbound
