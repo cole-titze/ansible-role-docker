@@ -61,6 +61,8 @@
       CN: code.deploypi
     subject_alt_name:
       - "DNS:code.deploypi"
+      - "DNS:portainer.deploypi"
+      - "DNS:homeassistant.deploypi"
       - "DNS:traefik.deploypi"
       - "DNS:*.deploypi"
       - "DNS:localhost"
