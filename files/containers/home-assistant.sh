@@ -1,7 +1,7 @@
 #!/bin/bash
 docker stop -t 600 home-assistant
 docker rm home-assistant
-docker pull ghcr.io/home-assistant/home-assistant:stable
+docker pull ghcr.io/homeassistant/raspberrypi4-homeassistant
 docker run -d \
   --name home-assistant \
   --restart=always \
