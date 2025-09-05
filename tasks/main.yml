@@ -96,8 +96,9 @@
 - name: Add code-space
   ansible.builtin.import_tasks: containers/code-space/code-space.yml
 
-- name: Add pivpn
-  ansible.builtin.import_tasks: services/vpn/vpn.yml
+# Uncomment for vpn (I'm using a different vpn)
+# - name: Add pivpn
+#   ansible.builtin.import_tasks: services/vpn/vpn.yml
 
 - name: Add unbound
   ansible.builtin.import_tasks: services/unbound/unbound.yml
