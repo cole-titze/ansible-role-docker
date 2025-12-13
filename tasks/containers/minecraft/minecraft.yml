@@ -1,0 +1,34 @@
+---
+- name: Create Minecraft Bedrock data directory
+  file:
+    path: /opt/minecraft-bedrock
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+
+- name: Ensure latest Home Assistant image is pulled
+  community.docker.docker_image:
+    name: itzg/minecraft-bedrock-server:latest
+    source: pull
+
+- name: Deploy Minecraft Bedrock Server container
+  community.docker.docker_container:
+    name: minecraft-bedrock
+    image: itzg/minecraft-bedrock-server:latest
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "19132:19132/udp"
+    volumes:
+      - /opt/minecraft-bedrock:/data
+    env:
+      EULA: "TRUE"
+      SERVER_NAME: "Bedrock Server"
+      GAMEMODE: "survival"
+      DIFFICULTY: "easy"
+      LEVEL_NAME: "world"
+      ONLINE_MODE: "true"
+      ALLOW_CHEATS: "false"
+      MAX_PLAYERS: "10"
+    user: "1000:1000"
