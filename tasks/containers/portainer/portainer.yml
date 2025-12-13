@@ -7,6 +7,11 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 
+- name: Ensure latest Home Assistant image is pulled
+  community.docker.docker_image:
+    name: portainer/portainer-ce:latest
+    source: pull
+
 - name: Deploy Portainer container
   community.docker.docker_container:
     name: portainer
