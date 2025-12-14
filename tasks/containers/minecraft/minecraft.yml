@@ -1,13 +1,76 @@
 ---
 - name: Create Minecraft Bedrock data directory
-  file:
-    path: /opt/minecraft-bedrock
+  ansible.builtin.file:
+    path: "/opt/minecraft-bedrock"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: "0755"
 
-- name: Ensure latest Home Assistant image is pulled
+- name: Check if Ipad world already exists
+  ansible.builtin.stat:
+    path: "/opt/minecraft-bedrock/worlds/Ipad"
+  register: ipad_world
+
+# -------- RESTORE ONLY IF WORLD IS MISSING --------
+
+- name: Find local Minecraft backups
+  ansible.builtin.find:
+    paths: "{{ lookup('env', 'HOME') }}/source/ansible-files/backups/minecraft/bedrock"
+    patterns: "*.zip"
+  delegate_to: localhost
+  register: local_backups
+  when: not ipad_world.stat.exists
+
+- name: Fail if no backups exist
+  ansible.builtin.fail:
+    msg: "No Minecraft backups found to restore from"
+  when:
+    - not ipad_world.stat.exists
+    - local_backups.matched == 0
+
+- name: Select newest local backup
+  ansible.builtin.set_fact:
+    newest_backup: >-
+      {{ local_backups.files
+          | sort(attribute='mtime', reverse=true)
+          | first }}
+  when: not ipad_world.stat.exists
+
+- name: Copy newest backup to Pi
+  ansible.builtin.copy:
+    src: "{{ newest_backup.path }}"
+    dest: "/tmp/minecraft_restore.zip"
+    mode: "0644"
+  when: not ipad_world.stat.exists
+
+- name: Ensure worlds directory exists
+  ansible.builtin.file:
+    path: "/opt/minecraft-bedrock/worlds"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+  when: not ipad_world.stat.exists
+
+- name: Restore Minecraft world from backup
+  ansible.builtin.unarchive:
+    src: "/tmp/minecraft_restore.zip"
+    dest: "/opt/minecraft-bedrock/worlds"
+    remote_src: true
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+  when: not ipad_world.stat.exists
+
+- name: Remove temporary restore zip
+  ansible.builtin.file:
+    path: "/tmp/minecraft_restore.zip"
+    state: absent
+  when: not ipad_world.stat.exists
+
+# -------- DEPLOY CONTAINER --------
+
+- name: Ensure latest Minecraft Bedrock image is pulled
   community.docker.docker_image:
     name: itzg/minecraft-bedrock-server:latest
     source: pull
@@ -21,7 +84,7 @@
     ports:
       - "19132:19132/udp"
     volumes:
-      - /opt/minecraft-bedrock:/data
+      - "/opt/minecraft-bedrock:/data"
     env:
       EULA: "TRUE"
       SERVER_NAME: "Bedrock Server"
