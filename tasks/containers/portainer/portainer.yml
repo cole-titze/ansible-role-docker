@@ -1,11 +1,9 @@
 ---
 # Setup Portainer
-- name: Create Portainer data directory
-  file:
-    path: /opt/portainer
-    state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+- name: Ensure Portainer volume exists
+  community.docker.docker_volume:
+    name: portainer_data
+    state: present
 
 - name: Ensure latest Home Assistant image is pulled
   community.docker.docker_image:
@@ -23,7 +21,7 @@
       - "9443:9443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "/opt/portainer:/data"
+      - "portainer_data:/data"
     labels:
       traefik.enable: "true"
       traefik.http.routers.portainer.rule: "Host(`portainer.deploypi`)"
