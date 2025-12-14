@@ -27,7 +27,7 @@
       SERVER_NAME: "Bedrock Server"
       GAMEMODE: "survival"
       DIFFICULTY: "easy"
-      LEVEL_NAME: "world"
+      LEVEL_NAME: "Ipad"
       ONLINE_MODE: "true"
       ALLOW_CHEATS: "false"
       MAX_PLAYERS: "10"
