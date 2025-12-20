@@ -109,6 +109,9 @@
     modification_time: preserve
     access_time: preserve
 
+#TODO: Make this latest traefik version
+#TODO: Add nightly update cron job for traefik container
+#TODO: Fix errors in container (may get fixed from above steps)
 - name: Start Traefik container
   community.docker.docker_container:
     name: traefik

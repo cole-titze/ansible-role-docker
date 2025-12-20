@@ -13,6 +13,7 @@
     name: ghcr.io/home-assistant/home-assistant:stable
     source: pull
 
+# TODO: Use traefik or leave comment on why not
 - name: Run Home Assistant Docker container
   community.docker.docker_container:
     name: home-assistant

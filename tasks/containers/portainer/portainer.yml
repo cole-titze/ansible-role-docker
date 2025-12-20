@@ -12,6 +12,7 @@
     name: portainer/portainer-ce:latest
     source: pull
 
+# TODO: Just use hostname instead of ports
 - name: Deploy Portainer container
   community.docker.docker_container:
     name: portainer
