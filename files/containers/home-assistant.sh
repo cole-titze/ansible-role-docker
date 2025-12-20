@@ -9,7 +9,7 @@ docker run -d \
   -v /var/homeassistant:/config \
   --network traefik \
   --label traefik.enable=true \
-  --label traefik.http.routers.homeassistant.rule=Host\(`homeassistant.deploypi`\) \
+  --label 'traefik.http.routers.homeassistant.rule=Host(`homeassistant.deploypi`)' \
   --label traefik.http.routers.homeassistant.entrypoints=websecure \
   --label traefik.http.routers.homeassistant.tls=true \
   --label traefik.http.services.homeassistant.loadbalancer.server.port=8123 \

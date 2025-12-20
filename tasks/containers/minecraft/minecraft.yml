@@ -97,3 +97,30 @@
       VIEW_DISTANCE: "10"
       SIMULATION_DISTANCE: "6"
     user: "1000:1000"
+
+# Setup nightly updates
+- name: Copy Minecraft update script
+  ansible.builtin.copy:
+    src: files/containers/minecraft.sh
+    dest: /usr/local/bin/minecraft.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Ensure update script is executable
+  ansible.builtin.file:
+    path: /usr/local/bin/minecraft.sh
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
+
+- name: Schedule Minecraft update via cron
+  ansible.builtin.cron:
+    name: "Update Minecraft Docker container"
+    minute: "0"
+    hour: "3"
+    job: "/bin/bash /usr/local/bin/minecraft.sh"
+    user: "{{ ansible_user }}"
+    state: present
+  diff: no
