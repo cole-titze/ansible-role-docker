@@ -54,5 +54,5 @@
     minute: "0"
     hour: "3"
     job: "/bin/bash /usr/local/bin/pi-hole.sh"
-    user: "{{ ansible_user }}"
+    user: root
     state: present
