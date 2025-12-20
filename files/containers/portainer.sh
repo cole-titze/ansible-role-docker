@@ -6,6 +6,7 @@ docker run -d \
     --name portainer \
     -p 9443:9443 \
     -p 9000:9000 \
+    --network traefik \
     --restart=always \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v /opt/portainer:/data \
