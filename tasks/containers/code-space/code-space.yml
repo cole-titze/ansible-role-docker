@@ -22,6 +22,7 @@
       - /var/code-space:/home/coder/source
     labels:
       traefik.enable: "true"
+      traefik.docker.network: "traefik"
       traefik.http.routers.code-space.rule: "Host(`code.deploypi`)"
       traefik.http.routers.code-space.entrypoints: "websecure"
       traefik.http.routers.code-space.tls: "true"

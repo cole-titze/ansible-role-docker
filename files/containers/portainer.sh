@@ -11,5 +11,5 @@ docker run -d \
     --label traefik.http.routers.portainer.rule=Host\(`portainer.deploypi`\) \
     --label traefik.http.routers.portainer.entrypoints=websecure \
     --label traefik.http.routers.portainer.tls=true \
-    --label traefik.http.services.portainer.loadbalancer.server.port=9000 \
+    --label traefik.http.services.portainer.loadbalancer.server.port=9443 \
     portainer/portainer-ce:latest
