@@ -103,11 +103,14 @@
 # - name: Add pivpn
 #   ansible.builtin.import_tasks: services/vpn/vpn.yml
 
-- name: Add nhl-odds
-  ansible.builtin.import_tasks: containers/nhl-odds/nhl-odds.yml
+- name: Add pi-hole
+  ansible.builtin.import_tasks: services/pi-hole/pi-hole.yml
 
 - name: Add unbound
   ansible.builtin.import_tasks: services/unbound/unbound.yml
+
+- name: Add nhl-odds
+  ansible.builtin.import_tasks: containers/nhl-odds/nhl-odds.yml
 
 # TODO: This takes down wifi currently
 # - name: Add firewall
