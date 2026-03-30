@@ -66,3 +66,13 @@ docker_users: []
 
 # Docker daemon options as a dict
 docker_daemon_options: {}
+
+# NHL Odds settings
+nhl_odds_postgres_password: ""
+nhl_odds_api_key: ""
+nhl_odds_api_backfill_key: ""
+nhl_odds_cloudflare_tunnel_token: ""
+
+# GitHub Container Registry credentials (for pulling private images)
+ghcr_username: ""
+ghcr_pat: ""

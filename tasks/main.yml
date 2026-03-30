@@ -84,24 +84,27 @@
 # - name: Add nfs
 #   ansible.builtin.import_tasks: containers/nfs/nfs.yml
 
-- name: Add traefik
-  ansible.builtin.import_tasks: containers/traefik/traefik.yml
+# - name: Add traefik
+#   ansible.builtin.import_tasks: containers/traefik/traefik.yml
 
 - name: Add portainer
   ansible.builtin.import_tasks: containers/portainer/portainer.yml
 
-- name: Add home-assistant
-  ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
+# - name: Add home-assistant
+#   ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
 
-- name: Add code-space
-  ansible.builtin.import_tasks: containers/code-space/code-space.yml
+# - name: Add code-space
+#   ansible.builtin.import_tasks: containers/code-space/code-space.yml
 
-- name: Add minecraft bedrock server
-  ansible.builtin.import_tasks: containers/minecraft/minecraft.yml
+# - name: Add minecraft bedrock server
+#   ansible.builtin.import_tasks: containers/minecraft/minecraft.yml
 
 # Uncomment for vpn (I'm using a different vpn)
 # - name: Add pivpn
 #   ansible.builtin.import_tasks: services/vpn/vpn.yml
+
+- name: Add nhl-odds
+  ansible.builtin.import_tasks: containers/nhl-odds/nhl-odds.yml
 
 - name: Add unbound
   ansible.builtin.import_tasks: services/unbound/unbound.yml

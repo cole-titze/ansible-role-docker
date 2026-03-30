@@ -1,20 +1,31 @@
 # ansible-role-docker
-+ This repo will setup docker and the containers I run at home. You can find more information under each containers directory
 
-## Current setup
-```
-curl -sSL https://install.pi-hole.net | bash
-curl -L https://install.pivpn.io | bash
-```
-+ Restore backup in settings > teleporter > add the backup file
-+ DNS Name: perkaholic.duckdns.org
+Ansible role that installs Docker and deploys containers on the docker host (dockerpi).
 
-## Port map
-+ 6052, 6123 - Esphome
-+ 8123 - Home Assistant
-+ 8083 - LLM Backend
-+ 8000, 9443 - Portainer
-+ 8090 - Code Spaces (code.deploypi)
-+ 22 - ssh
-+ 53, 8001, 4430 - PiHole
-+ 51820 - Wireguard
+## Usage
+
+This role is called from `ansible-setup`:
+
+```bash
+ansible-playbook -i inventories/inventory.ini raspberry-pi-playbooks/docker-machine/docker-setup.yml
+```
+
+Secrets are loaded from `~/source/ansible-files/vars/cluster_vars.yml`.
+
+## Active services
+
+- **Portainer** — Docker management UI (ports 8000, 9443)
+- **NHL Odds** — Full-stack NHL prediction app (port 8081)
+- **Unbound** — Local DNS resolver
+
+## Inactive services (commented out in tasks/main.yml)
+
+Uncomment in `tasks/main.yml` to re-enable:
+
+- Traefik (reverse proxy)
+- Home Assistant
+- Code Space
+- Minecraft Bedrock
+- Pi-hole (now runs natively, not in Docker)
+- ESPHome, Magic Mirror, LLM Backend, NFS
+- PiVPN / Wireguard

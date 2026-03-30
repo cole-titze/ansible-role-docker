@@ -1,0 +1,5 @@
+#!/bin/bash
+cd ~/nhl-odds
+export PREDICTOR_CPUS=$(($(nproc)/2))
+docker compose --profile jobs --profile tunnel pull -q
+docker compose --profile tunnel up -d --remove-orphans >> /var/log/nhl-odds-update.log 2>&1

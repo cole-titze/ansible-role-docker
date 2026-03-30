@@ -1,0 +1,87 @@
+---
+# Setup NHL Odds
+- name: Ensure nhl-odds directory exists
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/nhl-odds"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Ensure nhl-odds backups directory exists
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/Backups"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Download production compose file
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/cole-titze/nhl-odds/main/docker-compose.prod.yml
+    dest: "/home/{{ ansible_user }}/nhl-odds/docker-compose.yml"
+    mode: '0644'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Create .env file from secrets
+  ansible.builtin.copy:
+    dest: "/home/{{ ansible_user }}/nhl-odds/.env"
+    mode: '0600'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    content: |
+      POSTGRES_PASSWORD={{ nhl_odds_postgres_password }}
+      ODDS_API_KEY={{ nhl_odds_api_key | default('') }}
+      API_BACKFILL_KEY={{ nhl_odds_api_backfill_key | default('') }}
+      CLOUDFLARE_TUNNEL_TOKEN={{ nhl_odds_cloudflare_tunnel_token | default('') }}
+
+- name: Log in to GitHub Container Registry
+  community.docker.docker_login:
+    registry: ghcr.io
+    username: "{{ ghcr_username }}"
+    password: "{{ ghcr_pat }}"
+
+- name: Pull and start nhl-odds services
+  community.docker.docker_compose_v2:
+    project_src: "/home/{{ ansible_user }}/nhl-odds"
+    pull: always
+    state: present
+
+# Nightly auto-update at 2:00 AM
+- name: Copy nhl-odds update script
+  ansible.builtin.copy:
+    src: files/containers/nhl-odds-update.sh
+    dest: /usr/local/bin/nhl-odds-update.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Schedule nhl-odds nightly update via cron
+  ansible.builtin.cron:
+    name: "Update nhl-odds containers"
+    minute: "0"
+    hour: "2"
+    job: "/bin/bash /usr/local/bin/nhl-odds-update.sh"
+    user: root
+    state: present
+  diff: no
+
+# Nightly database backup at 1:00 AM
+- name: Copy nhl-odds backup script
+  ansible.builtin.copy:
+    src: files/containers/nhl-odds-backup.sh
+    dest: /usr/local/bin/nhl-odds-backup.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+
+- name: Schedule nhl-odds nightly backup via cron
+  ansible.builtin.cron:
+    name: "Backup nhl-odds database"
+    minute: "0"
+    hour: "1"
+    job: "/bin/bash /usr/local/bin/nhl-odds-backup.sh"
+    user: root
+    state: present
+  diff: no
