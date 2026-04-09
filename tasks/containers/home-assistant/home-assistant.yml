@@ -135,7 +135,7 @@
 - name: Extract the latest Home Assistant backup into /var/homeassistant
   ansible.builtin.shell: |
     latest_backup=$(ls -Art "/home/pi/backups/homeassistant" | tail -n 1)
-    tar -xzf "/home/pi/backups/homeassistant/$latest_backup" -C /var/homeassistant
+    tar -xf "/home/pi/backups/homeassistant/$latest_backup" -C /var/homeassistant
   args:
     executable: /bin/bash
   when: 
