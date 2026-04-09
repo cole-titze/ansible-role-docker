@@ -90,8 +90,8 @@
 - name: Add portainer
   ansible.builtin.import_tasks: containers/portainer/portainer.yml
 
-# - name: Add home-assistant
-#   ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
+- name: Add home-assistant
+  ansible.builtin.import_tasks: containers/home-assistant/home-assistant.yml
 
 # - name: Add code-space
 #   ansible.builtin.import_tasks: containers/code-space/code-space.yml
