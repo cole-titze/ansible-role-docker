@@ -1,0 +1,4 @@
+#!/bin/bash
+mkdir -p /home/{{ ansible_user }}/Backups
+docker exec nhl-odds-database-1 pg_dump -U postgres -Fc nhl > /home/{{ ansible_user }}/Backups/nhl-$(date +%Y%m%d).dump 2>> /var/log/nhl-odds-backup.log
+find /home/{{ ansible_user }}/Backups -name "nhl-*.dump" -mtime +7 -delete

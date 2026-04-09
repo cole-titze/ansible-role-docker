@@ -45,16 +45,18 @@
 - name: Pull and start nhl-odds services
   community.docker.docker_compose_v2:
     project_src: "/home/{{ ansible_user }}/nhl-odds"
+    profiles:
+      - tunnel
     pull: always
     state: present
 
 # Nightly auto-update at 2:00 AM
 - name: Copy nhl-odds update script
-  ansible.builtin.copy:
-    src: files/containers/nhl-odds-update.sh
+  ansible.builtin.template:
+    src: files/containers/nhl-odds-update.sh.j2
     dest: /usr/local/bin/nhl-odds-update.sh
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: root
+    group: root
     mode: '0755'
 
 - name: Schedule nhl-odds nightly update via cron
@@ -69,11 +71,11 @@
 
 # Nightly database backup at 1:00 AM
 - name: Copy nhl-odds backup script
-  ansible.builtin.copy:
-    src: files/containers/nhl-odds-backup.sh
+  ansible.builtin.template:
+    src: files/containers/nhl-odds-backup.sh.j2
     dest: /usr/local/bin/nhl-odds-backup.sh
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: root
+    group: root
     mode: '0755'
 
 - name: Schedule nhl-odds nightly backup via cron
