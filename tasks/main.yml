@@ -112,6 +112,9 @@
 - name: Add nhl-odds
   ansible.builtin.import_tasks: containers/nhl-odds/nhl-odds.yml
 
+- name: Add retirement-calculator
+  ansible.builtin.import_tasks: containers/retirement-calculator/retirement-calculator.yml
+
 # TODO: This takes down wifi currently
 # - name: Add firewall
 #   ansible.builtin.import_tasks: security/firewall.yml

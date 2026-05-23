@@ -1,0 +1,59 @@
+---
+# Setup Retirement Calculator
+- name: Ensure retirement-calculator directory exists
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/retirement-calculator"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Download production compose file
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/cole-titze/retirement-calculator/main/docker-compose.prod.yml
+    dest: "/home/{{ ansible_user }}/retirement-calculator/docker-compose.yml"
+    mode: '0644'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Create .env file from secrets
+  ansible.builtin.copy:
+    dest: "/home/{{ ansible_user }}/retirement-calculator/.env"
+    mode: '0600'
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    content: |
+      CLOUDFLARE_TUNNEL_TOKEN={{ retirement_calculator_cloudflare_tunnel_token | default('') }}
+
+- name: Log in to GitHub Container Registry
+  community.docker.docker_login:
+    registry: ghcr.io
+    username: "{{ ghcr_username }}"
+    password: "{{ ghcr_pat }}"
+
+- name: Pull and start retirement-calculator services
+  community.docker.docker_compose_v2:
+    project_src: "/home/{{ ansible_user }}/retirement-calculator"
+    profiles:
+      - tunnel
+    pull: always
+    state: present
+
+# Nightly auto-update at 3:00 AM
+- name: Copy retirement-calculator update script
+  ansible.builtin.template:
+    src: files/containers/retirement-calculator-update.sh.j2
+    dest: /usr/local/bin/retirement-calculator-update.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Schedule retirement-calculator nightly update via cron
+  ansible.builtin.cron:
+    name: "Update retirement-calculator container"
+    minute: "0"
+    hour: "3"
+    job: "/bin/bash /usr/local/bin/retirement-calculator-update.sh"
+    user: root
+    state: present
+  diff: no
