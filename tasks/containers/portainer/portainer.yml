@@ -49,7 +49,7 @@
     name: "Update portainer Docker container"
     minute: "0"
     hour: "3"
-    job: "/bin/bash /usr/local/bin/portainer.sh"
+    job: "/bin/bash /usr/local/bin/portainer.sh >> /var/log/portainer-update.log 2>&1"
     user: root
     state: present
   diff: no

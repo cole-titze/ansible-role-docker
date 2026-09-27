@@ -58,7 +58,7 @@
     name: "Update home assitant container"
     minute: "30"
     hour: "4"
-    job: "/bin/bash /usr/local/bin/home-assistant.sh"
+    job: "/bin/bash /usr/local/bin/home-assistant.sh >> /var/log/home-assistant-update.log 2>&1"
     user: root
     state: present
   diff: no
