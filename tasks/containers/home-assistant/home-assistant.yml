@@ -56,8 +56,8 @@
 - name: Schedule home assistant update via cron
   ansible.builtin.cron:
     name: "Update home assitant container"
-    minute: "0"
-    hour: "3"
+    minute: "30"
+    hour: "4"
     job: "/bin/bash /usr/local/bin/home-assistant.sh"
     user: root
     state: present
