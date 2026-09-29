@@ -84,8 +84,8 @@
   ansible.builtin.cron:
     name: "Move backup home assitant files"
     minute: "0"
-    hour: "1"
-    job: "/bin/bash /usr/local/bin/backup-home-assistant.sh"
+    hour: "4"
+    job: "/bin/bash /usr/local/bin/backup-home-assistant.sh >> /var/log/home-assistant-backup.log 2>&1"
     user: root
     state: present
   diff: no
