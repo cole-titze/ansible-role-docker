@@ -109,9 +109,6 @@
 - name: Add unbound
   ansible.builtin.import_tasks: services/unbound/unbound.yml
 
-- name: Add nhl-odds
-  ansible.builtin.import_tasks: containers/nhl-odds/nhl-odds.yml
-
 - name: Add retirement-calculator
   ansible.builtin.import_tasks: containers/retirement-calculator/retirement-calculator.yml
 
