@@ -84,9 +84,6 @@
 # - name: Add nfs
 #   ansible.builtin.import_tasks: containers/nfs/nfs.yml
 
-# - name: Add traefik
-#   ansible.builtin.import_tasks: containers/traefik/traefik.yml
-
 - name: Add portainer
   ansible.builtin.import_tasks: containers/portainer/portainer.yml
 

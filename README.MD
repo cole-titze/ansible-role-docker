@@ -15,17 +15,15 @@ Secrets are loaded from `~/source/ansible-files/vars/cluster_vars.yml`.
 ## Active services
 
 - **Portainer** — Docker management UI (ports 8000, 9443)
-- **NHL Odds** — Full-stack NHL prediction app (port 8081)
+- **Home Assistant**
+- **Pi-hole** — runs natively, not in Docker
 - **Unbound** — Local DNS resolver
 
 ## Inactive services (commented out in tasks/main.yml)
 
 Uncomment in `tasks/main.yml` to re-enable:
 
-- Traefik (reverse proxy)
-- Home Assistant
 - Code Space
 - Minecraft Bedrock
-- Pi-hole (now runs natively, not in Docker)
 - ESPHome, Magic Mirror, LLM Backend, NFS
 - PiVPN / Wireguard

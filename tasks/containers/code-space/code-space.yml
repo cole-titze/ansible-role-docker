@@ -12,7 +12,7 @@
     name: ghcr.io/cole-titze/containers/code-space:latest
     source: pull
 
-- name: Run Code Space Docker container behind Traefik
+- name: Run Code Space Docker container
   community.docker.docker_container:
     name: code-space
     image: ghcr.io/cole-titze/containers/code-space:latest
@@ -20,18 +20,11 @@
     restart_policy: always
     volumes:
       - /var/code-space:/home/coder/source
-    labels:
-      traefik.enable: "true"
-      traefik.docker.network: "traefik"
-      traefik.http.routers.code-space.rule: "Host(`code.deploypi`)"
-      traefik.http.routers.code-space.entrypoints: "websecure"
-      traefik.http.routers.code-space.tls: "true"
-      traefik.http.services.code-space.loadbalancer.server.port: "8090"
+    ports:
+      - "8090:8090"
     env:
       PASSWORD: "{{ code_space_password }}"
     detach: true
-    networks:
-      - name: traefik
 
 # Setup nightly updates
 - name: Template code space update script
