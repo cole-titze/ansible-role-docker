@@ -8,7 +8,7 @@
     - "cgroup_memory=1"
     - "cgroup_enable=memory"
   register: cmdline_result
-  when: ansible_distribution == 'Debian'
+  when: ansible_facts['distribution'] == 'Debian'
 
 - name: Reboot the machine
   ansible.builtin.reboot:
