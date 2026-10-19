@@ -63,3 +63,16 @@
   become: true
   # pihole-FTL prints the list as "[ a, b ]", not JSON.
   when: pihole_current_dnsmasq_lines.stdout != '[ ' ~ (pihole_dnsmasq_lines | join(', ')) ~ ' ]'
+
+- name: Read Pi-hole regex denylist
+  ansible.builtin.command: pihole-FTL sqlite3 /etc/pihole/gravity.db "select domain from domainlist where type = 3"
+  become: true
+  register: pihole_current_regex_denylist
+  changed_when: false
+  check_mode: false
+
+- name: Add Pi-hole regex denylist entries
+  ansible.builtin.command: pihole --regex --comment "Managed by Ansible" '{{ item }}'
+  become: true
+  loop: "{{ pihole_regex_denylist }}"
+  when: item not in pihole_current_regex_denylist.stdout_lines

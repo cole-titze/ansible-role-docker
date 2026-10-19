@@ -71,3 +71,9 @@ docker_daemon_options: {}
 pihole_dnsmasq_lines:
   - address=/kubecluster/10.42.0.21
   - address=/kubecluster/10.42.0.22
+# Regex denylist for Pi-hole. Roku TV telemetry, ad and ad-measurement hosts that the
+# StevenBlack list misses; blocking these leaves the home screen and channels working.
+pihole_regex_denylist:
+  - '(^|\.)logs\.roku\.com$'
+  - '(^|\.)ads\.roku\.com$'
+  - '(^|\.)ravm\.tv$'
