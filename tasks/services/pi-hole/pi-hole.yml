@@ -50,3 +50,16 @@
   ansible.builtin.command: pihole -up
   become: true
   when: pihole_installed.rc == 0
+
+- name: Read Pi-hole dnsmasq_lines
+  ansible.builtin.command: pihole-FTL --config misc.dnsmasq_lines
+  become: true
+  register: pihole_current_dnsmasq_lines
+  changed_when: false
+  check_mode: false
+
+- name: Set Pi-hole dnsmasq_lines
+  ansible.builtin.command: "pihole-FTL --config misc.dnsmasq_lines '{{ pihole_dnsmasq_lines | to_json }}'"
+  become: true
+  # pihole-FTL prints the list as "[ a, b ]", not JSON.
+  when: pihole_current_dnsmasq_lines.stdout != '[ ' ~ (pihole_dnsmasq_lines | join(', ')) ~ ' ]'

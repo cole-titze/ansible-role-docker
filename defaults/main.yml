@@ -66,3 +66,8 @@ docker_users: []
 
 # Docker daemon options as a dict
 docker_daemon_options: {}
+# Extra dnsmasq lines for Pi-hole. *.kubecluster resolves to the Traefik hostPorts on the
+# K3s workers; two A records so the names still work while one worker is down.
+pihole_dnsmasq_lines:
+  - address=/kubecluster/10.42.0.21
+  - address=/kubecluster/10.42.0.22
